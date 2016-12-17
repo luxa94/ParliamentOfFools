@@ -5,12 +5,12 @@
     <xs:element name="User">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="id" type="xs:ID" />
                 <xs:element name="username" type="xs:string"/>
                 <xs:element name="password" type="xs:string"/>
                 <xs:element name="name" type="xs:string"/>
                 <xs:element name="role" type="user:Role"/>
             </xs:sequence>
+            <xs:attribute name="id" type="xs:ID"/>
         </xs:complexType>
     </xs:element>
 
