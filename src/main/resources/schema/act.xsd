@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.fools.gov.rs/acts"
+           xmlns="http://www.fools.gov.rs/acts"
+           jxb:version="2.0">
+    <xs:complexType mixed="true" name="content">
+        <xs:sequence>
+            <xs:element name="contentItem" maxOccurs="unbounded" minOccurs="1" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="javaDate">
+        <xs:annotation>
+            <xs:appinfo>
+                <jxb:javaType name="java.util.Date"
+                              parseMethod="com.bdzjn.xml.util.DateConverter.parseDate"
+                              printMethod="com.bdzjn.xml.util.DateConverter.printDate"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:restriction base="xs:date"/>
+    </xs:simpleType>
+
+    <xs:element name="act">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="preamble" type="content"/>
+                <xs:sequence>
+                    <xs:choice minOccurs="2" maxOccurs="unbounded">
+                        <xs:sequence>
+                            <xs:element ref="part" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                        <xs:sequence>
+                            <xs:element ref="head" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                        <xs:sequence>
+                            <xs:element ref="article" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="title" type="xs:string" use="required"/>
+            <xs:attribute name="country" type="xs:string" use="required"/>
+            <xs:attribute name="region" type="xs:string" use="required"/>
+            <xs:attribute name="establishment" type="xs:string" use="required"/>
+            <xs:attribute name="serial" type="xs:token" use="required"/>
+            <xs:attribute name="date" type="javaDate" use="required"/>
+            <xs:attribute name="city" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="part">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="2" maxOccurs="unbounded" ref="head"/>
+            </xs:sequence>
+            <xs:attribute name="title" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="head">
+        <xs:complexType>
+            <xs:choice>
+                <xs:sequence>
+                    <xs:element minOccurs="1" maxOccurs="unbounded" ref="article"/>
+                </xs:sequence>
+                <xs:sequence>
+                    <xs:element minOccurs="2" maxOccurs="unbounded" ref="section"/>
+                </xs:sequence>
+            </xs:choice>
+            <xs:attribute name="title" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="section">
+        <xs:complexType>
+            <xs:choice>
+                <xs:sequence>
+                    <xs:element minOccurs="2" maxOccurs="unbounded" ref="subsection"/>
+                </xs:sequence>
+                <xs:sequence>
+                    <xs:element minOccurs="1" maxOccurs="unbounded" ref="article"/>
+                </xs:sequence>
+            </xs:choice>
+            <xs:attribute name="title" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="subsection">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="unbounded" ref="article"/>
+            </xs:sequence>
+            <xs:attribute name="title" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="article">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="unbounded" ref="paragraph"/>
+            </xs:sequence>
+            <xs:attribute name="title" type="xs:string"/>
+            <xs:attribute name="id" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="paragraph">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:choice minOccurs="2" maxOccurs="unbounded">
+                    <xs:element ref="item"/>
+                    <xs:element name="text" type="content"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="item">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:choice minOccurs="2" maxOccurs="unbounded">
+                    <xs:element ref="subItem"/>
+                    <xs:element name="text" type="content"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="subItem">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:choice minOccurs="2" maxOccurs="unbounded">
+                    <xs:element ref="ident"/>
+                    <xs:element name="text" type="content"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ident" type="content"/>
+</xs:schema>

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-           targetNamespace="http://www.fools.gov.rs/users" xmlns:user="http://www.fools.gov.rs/users">
-
-    <xs:element name="User">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.fools.gov.rs/users"
+           xmlns:user="http://www.fools.gov.rs/users">
+    <xs:element name="user">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="username" type="xs:string"/>
-                <xs:element name="password" type="xs:string"/>
+                <xs:element name="username" type="xs:token"/>
+                <xs:element name="password" type="xs:token"/>
                 <xs:element name="name" type="xs:string"/>
-                <xs:element name="role" type="user:Role"/>
+                <xs:element name="role" type="user:role"/>
             </xs:sequence>
             <xs:attribute name="id" type="xs:ID"/>
         </xs:complexType>
     </xs:element>
 
-    <xs:simpleType name="Role">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Audi"/>
-            <xs:enumeration value="Golf"/>
-            <xs:enumeration value="BMW"/>
+    <xs:simpleType name="role">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="PRESIDENT"/>
+            <xs:enumeration value="CITIZEN"/>
+            <xs:enumeration value="ALDERMAN"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
