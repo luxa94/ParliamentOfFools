@@ -29,10 +29,6 @@ public class Session {
     @Enumerated(EnumType.STRING)
     private SessionStatus status;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<Attendance> attendances = new ArrayList<>();
-
     @Override
     public String toString() {
         return "Session{" +
@@ -106,15 +102,4 @@ public class Session {
         this.status = status;
     }
 
-    public List<Attendance> getAttendances() {
-        return attendances;
-    }
-
-    public void addAttendance(Attendance attendance) {
-        this.attendances.add(attendance);
-    }
-
-    public void setAttendances(List<Attendance> attendances) {
-        this.attendances = attendances;
-    }
 }
