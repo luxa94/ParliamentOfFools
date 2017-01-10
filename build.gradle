@@ -68,12 +68,18 @@ jaxb2 {
 			schema = 'src/main/resources/schema/user.xsd'
 		}
 	}
-    xjc {
-        'act-classes' {
-            basePackage = 'com.bdzjn.xml.model.act'
-            schema = 'src/main/resources/schema/act.xsd'
-        }
-    }
+//    xjc {
+//        'act-classes' {
+//            basePackage = 'com.bdzjn.xml.model.act'
+//            schema = 'src/main/resources/schema/act.xsd'
+//        }
+//    }
+	xjc {
+		'amendment-classes' {
+			basePackage = 'com.bdzjn.xml.model.act'
+			schema = 'src/main/resources/schema/amendment.xsd'
+		}
+	}
 }
 //
 //sourceSets {

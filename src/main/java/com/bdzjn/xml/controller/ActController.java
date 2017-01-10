@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/acts")
@@ -27,7 +26,7 @@ public class ActController {
     }
 
     @PreAuthorize("hasAnyAuthority('ALDERMAN', 'PRESIDENT')")
-    @PostMapping
+    @PostMapping//(produces = {"application/xml"})
     public ResponseEntity create(@RequestBody Act act,
                                  @AuthenticationPrincipal User user) {
         act.setAuthorId(user.getId());
@@ -52,7 +51,7 @@ public class ActController {
     public ResponseEntity update(@RequestBody Act act,
                                  @PathVariable String id) {
         act.setId(id);
-        final Optional<Act> updatedAct = actService.update(act);
+        final Act updatedAct = actService.update(act).orElseThrow(UnprocessableEntityException::new);
         return new ResponseEntity<>(updatedAct, HttpStatus.OK);
     }
 
