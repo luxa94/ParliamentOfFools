@@ -34,7 +34,7 @@ public class ActController {
         return new ResponseEntity<>(savedAct, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping(produces = "application/xml")
     public ResponseEntity findAll() {
         final List<Act> acts = actService.findAll();
         return new ResponseEntity<>(acts, HttpStatus.OK);

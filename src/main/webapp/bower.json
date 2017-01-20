@@ -1,0 +1,27 @@
+{
+  "name": "ParliamentOfFools",
+  "homepage": "https://github.com/luxa94/ParliamentOfFools",
+  "authors": [
+    "Nikola Lukić <luknik94@gmail.com>",
+    "Jasna Stanković <jaca994@yahoo.com>"
+  ],
+  "description": "xml",
+  "main": "index.html",
+  "keywords": [
+    "xml"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.6.1",
+    "angular-ui-router": "^0.3.2",
+    "restangular": "^1.5.2",
+    "angular-material": "^1.1.1",
+    "angular-route": "^1.5.9",
+    "angular-file-upload": "^2.4.0",
+    "angular-resource": "^1.6.0",
+    "lodash": "^4.17.3",
+    "ngstorage": "^0.3.11",
+    "angular-material-icons": "^0.7.1",
+    "ng-alertify": "^1.0.2"
+  }
+}

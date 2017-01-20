@@ -5,11 +5,16 @@ import com.bdzjn.xml.properties.MarkLogicConfiguration;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.JAXBHandle;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,11 +76,16 @@ public class ActRepository {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-        call.xquery("declare namespace u = \"http://www.fools.gov.rs/users\";\n//u:user");
+        call.xquery("declare namespace a = \"http://www.fools.gov.rs/acts\";\n//a:act");
 
         final List<Act> acts = new ArrayList<>();
-        call.eval().forEach(evalResult -> {
-            final Act act = evalResult.getAs(Act.class);
+        final EvalResultIterator eval = call.eval();
+
+        eval.forEach(evalResult -> {
+            final String s = evalResult.getAs(String.class);
+            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(s.getBytes(Charset.defaultCharset()));
+            final Act act = JAXB.unmarshal(byteArrayInputStream, Act.class);
+
             acts.add(act);
         });
 

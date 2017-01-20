@@ -1,0 +1,44 @@
+<form novalidate name="registerForm">
+    <div flex layout="column" layout-align="center center">
+        <md-card class="md-padding">
+            <md-content layout-padding>
+                <md-card-title>
+                    <md-card-title-text>
+                        <p class="md-headline">Parliament of <strong>Fools</strong></p>
+                        <p class="md-subhead">Register a new account</p>
+                    </md-card-title-text>
+                </md-card-title>
+
+                <md-card-content>
+                    <md-input-container class="md-block">
+                        <label>Name</label>
+                        <input ng-model="vm.user.name" type="text" required>
+                    </md-input-container>
+
+                    <md-input-container class="md-block">
+                        <label>Username</label>
+                        <input ng-model="vm.user.username" type="text" required>
+                    </md-input-container>
+
+                    <md-input-container class="md-block">
+                        <label>Password</label>
+                        <input ng-model="vm.user.password" type="password" required>
+                    </md-input-container>
+
+                    <md-select ng-model="vm.user.role" placeholder="Choose a role" required>
+                        <md-option value="CITIZEN">Citizen</md-option>
+                        <md-option value="ALDERMAN">Alderman</md-option>
+                        <md-option value="PRESIDENT">President</md-option>
+                    </md-select>
+                </md-card-content>
+            </md-content>
+
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="vm.goToLogin()">Login</md-button>
+                <md-button type="submit" class="md-primary md-raised" ng-disabled="registerForm.$invalid"
+                           ng-click="vm.register()">Register
+                </md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+</form>
