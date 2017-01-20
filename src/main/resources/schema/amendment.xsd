@@ -3,11 +3,11 @@
            xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
            xmlns:act="http://www.fools.gov.rs/acts"
            elementFormDefault="qualified"
-           targetNamespace="http://www.fools.gov.rs/amendments"
-           xmlns="http://www.fools.gov.rs/amendments"
+           targetNamespace="http://www.fools.gov.rs/acts"
+           xmlns="http://www.fools.gov.rs/acts"
            jxb:version="2.0">
 
-    <xs:import schemaLocation="act.xsd" namespace="http://www.fools.gov.rs/acts"/>
+    <xs:include schemaLocation="act.xsd"/>
     <xs:element name="amendment">
         <xs:complexType>
             <xs:sequence>
@@ -15,7 +15,7 @@
                 <xs:element ref="act:article" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
 
-            <xs:attribute name="date" type="act:javaDate" use="required"/>
+            <xs:attribute name="date" type="javaDate" use="required"/>
             <xs:attribute name="id" type="xs:ID" use="required"/>
             <xs:attribute name="name" type="xs:string" use="required"/>
             <xs:attribute name="actId" type="xs:IDREF" use="required"/>

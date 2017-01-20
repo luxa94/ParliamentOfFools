@@ -111,68 +111,45 @@
     <xs:element name="paragraph">
         <xs:complexType mixed="true">
             <xs:sequence>
-                <xs:choice minOccurs="2" maxOccurs="unbounded">
-                    <xs:element ref="item"/>
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element ref="item" minOccurs="2" maxOccurs="unbounded"/>
                     <xs:element name="text" type="content"/>
                 </xs:choice>
             </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="item">
         <xs:complexType mixed="true">
             <xs:sequence>
-                <xs:choice minOccurs="2" maxOccurs="unbounded">
-                    <xs:element ref="subItem"/>
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element ref="subItem" minOccurs="2" maxOccurs="unbounded"/>
                     <xs:element name="text" type="content"/>
                 </xs:choice>
             </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="subItem">
         <xs:complexType mixed="true">
             <xs:sequence>
-                <xs:choice minOccurs="2" maxOccurs="unbounded">
-                    <xs:element ref="ident"/>
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element ref="ident" minOccurs="2" maxOccurs="unbounded"/>
                     <xs:element name="text" type="content"/>
                 </xs:choice>
             </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="ident" type="content"/>
-
-    <!-- AMENDMENT -->
-    <xs:element name="amendment">
+    <xs:element name="ident">
         <xs:complexType>
-            <xs:sequence>
-                <xs:element type="xs:string" name="description"/>
-                <xs:element ref="article" minOccurs="0" maxOccurs="1"/>
-            </xs:sequence>
-
-            <xs:attribute name="date" type="javaDate" use="required"/>
-            <xs:attribute name="id" type="xs:ID" use="required"/>
-            <xs:attribute name="name" type="xs:string" use="required"/>
-            <xs:attribute name="actId" type="xs:IDREF" use="required"/>
-            <xs:attribute name="articleId" type="xs:IDREF"/>
-            <xs:attribute name="type" type="amendmentType" use="required"/>
-            <xs:attribute name="status" type="amendmentStatus" use="required"/>
+            <xs:complexContent>
+                <xs:extension base="content">
+                    <xs:attribute name="id" type="xs:string"/>
+                </xs:extension>
+            </xs:complexContent>
         </xs:complexType>
     </xs:element>
-
-    <xs:simpleType name="amendmentType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="INSERT"/>
-            <xs:enumeration value="UPDATE"/>
-            <xs:enumeration value="DELETE"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="amendmentStatus">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="PENDING"/>
-            <xs:enumeration value="ACCEPTED"/>
-            <xs:enumeration value="REJECTED"/>
-        </xs:restriction>
-    </xs:simpleType>
 </xs:schema>
