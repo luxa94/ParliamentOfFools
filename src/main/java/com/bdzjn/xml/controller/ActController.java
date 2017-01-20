@@ -1,9 +1,11 @@
 package com.bdzjn.xml.controller;
 
+import com.bdzjn.xml.controller.dto.VoteDTO;
 import com.bdzjn.xml.controller.exception.NotFoundException;
 import com.bdzjn.xml.controller.exception.UnprocessableEntityException;
 import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
+import com.bdzjn.xml.model.act.wrapper.ActWrapper;
 import com.bdzjn.xml.service.ActService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ public class ActController {
     }
 
     @PreAuthorize("hasAnyAuthority('ALDERMAN', 'PRESIDENT')")
-    @PostMapping//(produces = {"application/xml"})
+    @PostMapping
     public ResponseEntity create(@RequestBody Act act,
                                  @AuthenticationPrincipal User user) {
         act.setAuthorId(user.getId());
@@ -37,10 +39,11 @@ public class ActController {
     @GetMapping(produces = "application/xml")
     public ResponseEntity findAll() {
         final List<Act> acts = actService.findAll();
-        return new ResponseEntity<>(acts, HttpStatus.OK);
+        final ActWrapper actWrapper = new ActWrapper(acts);
+        return new ResponseEntity<>(actWrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = "application/xml")
     public ResponseEntity findOne(@PathVariable String id) {
         final Act act = actService.findById(id).orElseThrow(NotFoundException::new);
         return new ResponseEntity<>(act, HttpStatus.OK);
@@ -53,6 +56,13 @@ public class ActController {
         act.setId(id);
         final Act updatedAct = actService.update(act).orElseThrow(UnprocessableEntityException::new);
         return new ResponseEntity<>(updatedAct, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('PRESIDENT')")
+    @PutMapping("/{id}/vote")
+    public ResponseEntity vote(@RequestBody VoteDTO voteDTO,
+                               @PathVariable long id) {
+        return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
     }
 
 }

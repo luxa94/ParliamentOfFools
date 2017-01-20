@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
