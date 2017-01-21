@@ -29,10 +29,9 @@ public class ActController {
 
     @PreAuthorize("hasAnyAuthority('ALDERMAN', 'PRESIDENT')")
     @PostMapping
-    public ResponseEntity create(@RequestBody Act act,
+    public ResponseEntity create(@RequestBody String rawAct,
                                  @AuthenticationPrincipal User user) {
-        act.setAuthorId(user.getId());
-        final Act savedAct = actService.create(act).orElseThrow(UnprocessableEntityException::new);
+        final Act savedAct = actService.create(rawAct, user).orElseThrow(UnprocessableEntityException::new);
         return new ResponseEntity<>(savedAct, HttpStatus.CREATED);
     }
 
