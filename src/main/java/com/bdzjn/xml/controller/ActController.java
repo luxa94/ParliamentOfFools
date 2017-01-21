@@ -43,7 +43,7 @@ public class ActController {
         return new ResponseEntity<>(actWrapper, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = "application/xml")
     public ResponseEntity findOne(@PathVariable String id) {
         final Act act = actService.findById(id).orElseThrow(NotFoundException::new);
         return new ResponseEntity<>(act, HttpStatus.OK);
