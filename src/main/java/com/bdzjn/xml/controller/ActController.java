@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 @RestController
@@ -75,29 +74,29 @@ public class ActController {
         return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
     }
 
-    @GetMapping(value="/pdf/{actId}", produces = "application/octet-stream")
-    public ResponseEntity<InputStreamResource> downloadPdf(@PathVariable String actId) throws Exception {
+    @GetMapping(value="/pdf/{actId}", produces = "application/pdf")
+    public ResponseEntity downloadPdf(@PathVariable String actId) throws Exception {
 
         final Act act = actService.findById(actId).orElseThrow(NotFoundException::new);
 
         String pathToXmlFile = "src/main/resources/pdf/" + actId + ".xml";
 
-        File actFile = new File(pathToXmlFile);
+        StringWriter stringWriter = new StringWriter();
         JAXBContext jaxbContext = JAXBContext.newInstance(Act.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        jaxbMarshaller.marshal(act, actFile);
+        jaxbMarshaller.marshal(act, stringWriter);
 
-        final String pathToPdfFile = pdfService.generatePDF(pathToXmlFile);
-
-        ClassPathResource pdfFile = new ClassPathResource(pathToPdfFile);
+        final ByteArrayOutputStream byteArrayOutputStream = pdfService.generatePDF(stringWriter);
+        final byte[] bytes = byteArrayOutputStream.toByteArray();
 
         return ResponseEntity
                 .ok()
-                .contentLength(pdfFile.contentLength())
+                .header("Content-Disposition", "attachment; filename=\"quot.pdf\";")
+                .contentLength(bytes.length)
                 .contentType(
-                        MediaType.parseMediaType("application/octet-stream"))
-                .body(new InputStreamResource(pdfFile.getInputStream()));
+                        MediaType.parseMediaType("application/pdf"))
+                .body(bytes);
     }
 
 }

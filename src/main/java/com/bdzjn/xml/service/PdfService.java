@@ -1,12 +1,8 @@
 package com.bdzjn.xml.service;
 
 import org.springframework.stereotype.Service;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+
+import java.io.*;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -31,24 +27,16 @@ public class PdfService {
 
     public static final String XSL_FILE = "src/main/resources/pdf/act_fo.xsl";
 
-    public static final String OUTPUT_FILE = "src/main/resources/pdf/";
-
-
     public PdfService() throws SAXException, IOException {
         fopFactory = FopFactory.newInstance(new File("src/main/resources/fop.xconf"));
         transformerFactory = new TransformerFactoryImpl();
     }
 
-    public String generatePDF(String inputFile) throws Exception {
-
-        // Point to the XSL-FO file
-        File xslFile = new File(XSL_FILE);
-
-        // Create transformation source
+    public ByteArrayOutputStream generatePDF(StringWriter inputFile) throws Exception {
         StreamSource transformSource = new StreamSource(XSL_FILE);
 
         // Initialize the transformation subject
-        StreamSource source = new StreamSource(new File(inputFile));
+        StreamSource source = new StreamSource(new ByteArrayInputStream(inputFile.getBuffer().toString().getBytes()));
 
         // Initialize user agent needed for the transformation
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
@@ -68,20 +56,7 @@ public class PdfService {
         // Start XSLT transformation and FOP processing
         xslFoTransformer.transform(source, res);
 
-        final String fullPathToPdfOutput = OUTPUT_FILE + "test.pdf";
-
-        // Generate PDF file
-        File pdfFile = new File(fullPathToPdfOutput);
-        if (!pdfFile.getParentFile().exists()) {
-            pdfFile.getParentFile().mkdir();
-        }
-
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(pdfFile));
-        out.write(outStream.toByteArray());
-
-        out.close();
-
-        return fullPathToPdfOutput;
+        return outStream;
     }
 }
 

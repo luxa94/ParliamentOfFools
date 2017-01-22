@@ -32,11 +32,7 @@
         function getPDF(actId) {
             debugger;
             console.log(actId);
-            actService.generatePdf(actId).then(function(response) {
-                console.log('success');
-            }).catch(function(error) {
-                console.log(error);
-            })
+            window.location.href = "api/acts/pdf/" + actId;
         }
 
 
