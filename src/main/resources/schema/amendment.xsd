@@ -21,7 +21,7 @@
             <xs:attribute name="actId" type="xs:IDREF" use="required"/>
             <xs:attribute name="articleId" type="xs:IDREF"/>
             <xs:attribute name="type" type="amendmentType" use="required"/>
-            <xs:attribute name="status" type="amendmentStatus" use="required"/>
+            <xs:attribute name="status" type="documentStatus" use="required"/>
         </xs:complexType>
     </xs:element>
 
@@ -30,14 +30,6 @@
             <xs:enumeration value="INSERT"/>
             <xs:enumeration value="UPDATE"/>
             <xs:enumeration value="DELETE"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="amendmentStatus">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="PENDING"/>
-            <xs:enumeration value="ACCEPTED"/>
-            <xs:enumeration value="REJECTED"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

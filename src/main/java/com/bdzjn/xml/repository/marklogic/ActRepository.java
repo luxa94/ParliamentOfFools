@@ -7,12 +7,20 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.*;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.springframework.stereotype.Component;
+import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +30,7 @@ import java.util.Optional;
 @Component
 public class ActRepository {
 
-    public Optional<Act> save(Act act) {
+    public Optional<Act> save(Act act, ByteArrayOutputStream metadataResult) {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
                 MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
@@ -34,6 +42,14 @@ public class ActRepository {
             handle.set(act);
 
             documentManager.write("/acts/" + act.getId(), handle);
+
+
+            final GraphManager graphManager = client.newGraphManager();
+            graphManager.setDefaultMimetype(RDFMimeTypes.RDFXML);
+            final String content = metadataResult.toString();
+
+            final StringHandle stringHandle = new StringHandle(content).withMimetype(RDFMimeTypes.RDFXML);
+            graphManager.merge("pof/act/metadata", stringHandle);
 
             client.release();
             return Optional.of(act);

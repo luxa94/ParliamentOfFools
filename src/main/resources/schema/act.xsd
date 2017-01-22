@@ -49,6 +49,7 @@
             <xs:attribute name="serial" type="xs:token" use="required"/>
             <xs:attribute name="date" type="javaDate" use="required"/>
             <xs:attribute name="city" type="xs:string" use="required"/>
+            <xs:attribute name="status" type="documentStatus" use="required"/>
         </xs:complexType>
     </xs:element>
 
@@ -152,4 +153,12 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+
+    <xs:simpleType name="documentStatus">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="PENDING"/>
+            <xs:enumeration value="ACCEPTED"/>
+            <xs:enumeration value="REJECTED"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

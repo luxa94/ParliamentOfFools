@@ -25,7 +25,7 @@ public class PdfService {
 
     private TransformerFactory transformerFactory;
 
-    public static final String XSL_FILE = "src/main/resources/pdf/act_fo.xsl";
+    private static final String XSL_FILE = "src/main/resources/pdf/act_fo.xsl";
 
     public PdfService() throws SAXException, IOException {
         fopFactory = FopFactory.newInstance(new File("src/main/resources/fop.xconf"));
