@@ -7,13 +7,21 @@ import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.wrapper.ActWrapper;
 import com.bdzjn.xml.service.ActService;
+import com.bdzjn.xml.service.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,9 +30,12 @@ public class ActController {
 
     private final ActService actService;
 
+    private final PdfService pdfService;
+
     @Autowired
-    public ActController(ActService actService) {
+    public ActController(ActService actService, PdfService pdfService) {
         this.actService = actService;
+        this.pdfService = pdfService;
     }
 
     @PreAuthorize("hasAnyAuthority('ALDERMAN', 'PRESIDENT')")
@@ -62,6 +73,31 @@ public class ActController {
     public ResponseEntity vote(@RequestBody VoteDTO voteDTO,
                                @PathVariable long id) {
         return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
+    }
+
+    @GetMapping(value="/pdf/{actId}", produces = "application/octet-stream")
+    public ResponseEntity<InputStreamResource> downloadPdf(@PathVariable String actId) throws Exception {
+
+        final Act act = actService.findById(actId).orElseThrow(NotFoundException::new);
+
+        String pathToXmlFile = "src/main/resources/pdf/" + actId + ".xml";
+
+        File actFile = new File(pathToXmlFile);
+        JAXBContext jaxbContext = JAXBContext.newInstance(Act.class);
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        jaxbMarshaller.marshal(act, actFile);
+
+        final String pathToPdfFile = pdfService.generatePDF(pathToXmlFile);
+
+        ClassPathResource pdfFile = new ClassPathResource(pathToPdfFile);
+
+        return ResponseEntity
+                .ok()
+                .contentLength(pdfFile.contentLength())
+                .contentType(
+                        MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(pdfFile.getInputStream()));
     }
 
 }

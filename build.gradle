@@ -1,20 +1,20 @@
 buildscript {
-	ext {
-		springBootVersion = '1.4.2.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-	}
+    ext {
+        springBootVersion = '1.4.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+    }
 }
 
 plugins {
-	id 'com.ewerk.gradle.plugins.jaxb2' version '1.0.2'
+    id 'com.ewerk.gradle.plugins.jaxb2' version '1.0.2'
 }
 
 def springBootVersion = '1.4.2.RELEASE'
@@ -25,60 +25,65 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-	baseName = 'parliament_of_fools'
-	version = '0.0.1-SNAPSHOT'
+    baseName = 'parliament_of_fools'
+    version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 idea {
-	module {
-		sourceDirs += file('build/classes/main/com/bdzjn/xml/model')
-		generatedSourceDirs += file('build/classes/main/com/bdzjn/xml/repository/impl')
-	}
+    module {
+        sourceDirs += file('build/classes/main/com/bdzjn/xml/model')
+        generatedSourceDirs += file('build/classes/main/com/bdzjn/xml/repository/impl')
+    }
 }
 
 
 dependencies {
-	compile "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
-	compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
-	compile "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+    compile "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+    compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
 
-	// Mark logic.
-	compile group: 'com.marklogic', name: 'java-client-api', version: '3.0.6'
-	// MySQL
-	compile 'mysql:mysql-connector-java:6.0.5'
+    // Mark logic.
+    compile group: 'com.marklogic', name: 'java-client-api', version: '3.0.6'
+    // MySQL
+    compile 'mysql:mysql-connector-java:6.0.5'
 
-	// QueryDSL
-	compile "com.querydsl:querydsl-apt:$queryDslVersion:jpa"
-	compile "com.querydsl:querydsl-jpa:$queryDslVersion"
+    // QueryDSL
+    compile "com.querydsl:querydsl-apt:$queryDslVersion:jpa"
+    compile "com.querydsl:querydsl-jpa:$queryDslVersion"
 
-	testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.1'
+    compile group: 'net.sf.saxon', name: 'Saxon-HE', version: '9.7.0-14'
+
+
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 }
 
 jaxb2 {
-	xjc {
-		'user-classes' {
-			basePackage = 'com.bdzjn.xml.model.user'
-			schema = 'src/main/resources/schema/user.xsd'
-		}
-	}
+    xjc {
+        'user-classes' {
+            basePackage = 'com.bdzjn.xml.model.user'
+            schema = 'src/main/resources/schema/user.xsd'
+        }
+    }
 //    xjc {
 //        'act-classes' {
 //            basePackage = 'com.bdzjn.xml.model.act'
 //            schema = 'src/main/resources/schema/act.xsd'
 //        }
 //    }
-	xjc {
-		'amendment-classes' {
-			basePackage = 'com.bdzjn.xml.model.act'
-			schema = 'src/main/resources/schema/amendment.xsd'
-		}
-	}
+    xjc {
+        'amendment-classes' {
+            basePackage = 'com.bdzjn.xml.model.act'
+            schema = 'src/main/resources/schema/amendment.xsd'
+        }
+    }
 }
 //
 //sourceSets {

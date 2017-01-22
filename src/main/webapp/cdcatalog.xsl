@@ -8,7 +8,7 @@
                 <th style="text-align:left">Date</th>
                 <th style="text-align:left">Get as</th>
             </tr>
-            <xsl:for-each select="wrapper/acts">
+            <xsl:for-each select="wrapper/act">
                 <tr>
                     <td>
                         <a href="#!/act/{@id}" alt="More information">
@@ -19,7 +19,7 @@
                         <xsl:value-of select="@date"/>
                     </td>
                     <td>
-                        <button ng-click="vm.getPDF()" style="cursor: pointer;"> PDF </button>
+                        <button ng-click="vm.getPDF('{@id}')" style="cursor: pointer;"> PDF </button>
                     </td>
                 </tr>
             </xsl:for-each>

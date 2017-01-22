@@ -3,9 +3,9 @@
     'use strict';
 
     angular.module('parliament')
-        .controller('homeController', ['$rootScope', '$state', '$mdDialog', 'xhttpService', '$compile', '$document', '$scope', homeController]);
+        .controller('homeController', ['$rootScope', '$state', '$mdDialog', 'xhttpService', '$compile', '$document', '$scope', 'actService', homeController]);
 
-    function homeController($rootScope, $state, $mdDialog, xhttpService, $compile, $document, $scope) {
+    function homeController($rootScope, $state, $mdDialog, xhttpService, $compile, $document, $scope, actService) {
         var vm = this;
         $scope.vm = vm;
         vm.user = $rootScope.user;
@@ -24,14 +24,20 @@
                 var xsltProcessor = new XSLTProcessor();
                 xsltProcessor.importStylesheet(style);
                 var resultDocument = xsltProcessor.transformToFragment(xml, document);
-                var cdListDiv = document.getElementById('cd-list');
-                angular.element(cdListDiv).append($compile(resultDocument)($scope));
+                var allActs = document.getElementById('allActs');
+                angular.element(allActs).append($compile(resultDocument)($scope));
             }
         }
 
 
-        function getPDF() {
-            console.log("heyy");
+        function getPDF(actId) {
+            debugger;
+            console.log(actId);
+            actService.generatePdf(actId).then(function(response) {
+                console.log('success');
+            }).catch(function(error) {
+                console.log(error);
+            })
         }
 
 
