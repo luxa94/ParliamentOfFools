@@ -7,11 +7,11 @@
 
     function config($stateProvider) {
         $stateProvider
-            .state('base.home', {
-                url: '/home',
-                controller: 'homeController',
+            .state('base.newAct', {
+                url: '/newAct',
+                controller: 'newActController',
                 controllerAs: 'vm',
-                templateUrl: 'app/home/home.html'
+                templateUrl: 'app/act/newAct/newAct.html'
             });
     }
 

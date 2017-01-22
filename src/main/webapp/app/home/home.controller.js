@@ -18,7 +18,6 @@
 
             var xml = xhttpService.get("/api/acts");
             var style = xhttpService.get("cdcatalog.xsl");
-            debugger;
             if (document.implementation && document.implementation.createDocument)
             {
                 var xsltProcessor = new XSLTProcessor();

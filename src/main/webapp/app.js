@@ -35,11 +35,17 @@
         $httpProvider.interceptors.push('authenticationResponseInterceptor');
     }
 
-    function run($http, $localStorage, $state, $rootScope) {
+    function run($http, $localStorage, $state, $rootScope, sessionService) {
         if ($localStorage.parliamentUser) {
             $http.defaults.headers.common.Authorization = $localStorage.parliamentUser.token;
             $rootScope.user = $localStorage.parliamentUser;
         }
+
+        sessionService.findActive()
+            .then(function (response) {
+                $rootScope.activeSession = response.data;
+            })
+            .catch(function () {});
 
         var publicStates = ['login', 'register'];
 

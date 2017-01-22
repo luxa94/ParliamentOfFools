@@ -23,16 +23,12 @@ public class SessionService {
     }
 
     public Session create(SessionDTO sessionDTO) {
-        if (sessionDTO.getSubmissionStartsOn().after(sessionDTO.getStartsOn())) {
-            throw new UnprocessableEntityException("Submissions date must be before session date.");
-        }
         if (sessionRepository.findOpenSession().isPresent()) {
             throw new UnprocessableEntityException("Another open session already exists.");
         }
         final Session session = new Session();
         session.setName(sessionDTO.getName());
         session.setStartsOn(sessionDTO.getStartsOn());
-        session.setSubmissionStartsOn(sessionDTO.getSubmissionStartsOn());
         session.setStatus(SessionStatus.ANNOUNCED);
 
         return sessionRepository.save(session);
@@ -46,10 +42,13 @@ public class SessionService {
         return sessionRepository.findOpenSession();
     }
 
+    public Session activateSession() {
+        final Session session = findOpenSession().orElseThrow(NotFoundException::new);
+        session.setStatus(SessionStatus.ACTIVE);
+        return sessionRepository.save(session);
+    }
+
     public void edit(SessionDTO sessionDTO) {
-        if (sessionDTO.getSubmissionStartsOn().after(sessionDTO.getStartsOn())) {
-            throw new UnprocessableEntityException("Submissions date must be before session date.");
-        }
         final Session session = sessionRepository.findOpenSession().orElseThrow(NotFoundException::new);
 
         if (sessionDTO.getStartsOn().before(new Date()) || session.getStatus() != SessionStatus.ANNOUNCED) {
@@ -57,7 +56,6 @@ public class SessionService {
         }
         session.setName(sessionDTO.getName());
         session.setStartsOn(sessionDTO.getStartsOn());
-        session.setSubmissionStartsOn(sessionDTO.getSubmissionStartsOn());
 
         sessionRepository.save(session);
     }
@@ -69,5 +67,4 @@ public class SessionService {
         }
         sessionRepository.delete(session);
     }
-
 }

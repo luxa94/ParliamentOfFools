@@ -44,6 +44,13 @@ public class SessionController {
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
+    @PutMapping("/active")
+    public ResponseEntity activate() {
+        final Session session = sessionService.activateSession();
+        return new ResponseEntity<>(session, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAnyAuthority('PRESIDENT')")
     @Transactional
     @PutMapping

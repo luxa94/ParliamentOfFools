@@ -21,7 +21,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 
     private final UserRepository userRepository;
 
-    public static final String AUTHORIZATION = "X-AUTH-TOKEN";
+    public static final String AUTHORIZATION = "Authorization";
 
     @Autowired
     public AuthenticationFilter(UserRepository userRepository) {

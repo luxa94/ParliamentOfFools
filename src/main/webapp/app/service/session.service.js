@@ -14,6 +14,7 @@
             create: create,
             findOne: findOne,
             findActive: findActive,
+            activate: activate,
             edit: edit,
             delete: deleteOne
         };
@@ -28,6 +29,10 @@
 
         function findActive() {
             return $http.get(ACTIVE_URL);
+        }
+
+        function activate() {
+            return $http.put(ACTIVE_URL);
         }
 
         function edit(sessionDTO) {

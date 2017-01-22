@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div layout="column" layout-align="center center">
+    <md-card ng-if="vm.activeSession" layout="column" class="md-padding" flex flex-gt-md="80">
+        <md-card-header layout="column">
+            <p class="md-headline">{{vm.activeSession.name}}</p>
+            <p class="md-subhead" ng-if="vm.activeSession.status === 'ANNOUNCED'">Announced session</p>
+            <p class="md-subhead" ng-if="vm.activeSession.status === 'ACTIVE'">Active session</p>
+            <p class="md-subhead">Starts on: {{vm.activeSession.startsOn | date:'mediumDate'}}</p>
+        </md-card-header>
+        <md-card-actions ng-if="vm.user.role === 'PRESIDENT' && vm.activeSession.status === 'ANNOUNCED'" layout="row"
+                         layout-align="end center">
+            <md-button class="md-primary md-raised" ng-click="vm.newAct()">New act</md-button>
+            <md-button class="md-accent md-raised" ng-click="vm.activate()">Start</md-button>
+        </md-card-actions>
+    </md-card>
 
-</body>
-</html>
+    <md-card ng-if="!vm.activeSession && vm.user.role === 'PRESIDENT'" layout="column" class="md-padding" flex
+             flex-gt-md="60">
+        <form novalidate name="newSessionForm">
+            <md-card-header>
+                <p class="md-headline">Create a new session</p>
+            </md-card-header>
+
+            <md-card-content>
+                <md-input-container class="md-block">
+                    <label>Session name</label>
+                    <input ng-model="vm.newSession.name" type="text" required>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Session starts on</label>
+                    <md-datepicker ng-model="vm.newSession.startsOn" md-min-date="vm.minDate" required></md-datepicker>
+                </md-input-container>
+            </md-card-content>
+
+            <md-card-actions ng-if="vm.user.role === 'PRESIDENT'" layout="row" layout-align="end center">
+                <md-button class="md-warn md-raised" ng-click="vm.cancel()">Cancel</md-button>
+                <md-button type="submit" ng-click="vm.save()" ng-disabled="newSessionForm.$invalid" class="md-accent md-raised">Save
+                </md-button>
+            </md-card-actions>
+        </form>
+    </md-card>
+
+    <md-card ng-if="!vm.activeSession && vm.user.role !== 'PRESIDENT'" layout="column" class="md-padding" flex
+             flex-gt-md="60">
+        <md-card-header>
+            <p class="md-headline">There is no currently announced session</p>
+        </md-card-header>
+    </md-card>
+</div>

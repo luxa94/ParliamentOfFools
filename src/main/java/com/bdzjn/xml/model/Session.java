@@ -17,9 +17,6 @@ public class Session {
     private long id;
 
     @NotNull
-    private Date submissionStartsOn;
-
-    @NotNull
     private Date startsOn;
 
     @NotNull
@@ -33,7 +30,6 @@ public class Session {
     public String toString() {
         return "Session{" +
                 "id=" + id +
-                ", submissionStartsOn=" + submissionStartsOn +
                 ", startsOn=" + startsOn +
                 ", name='" + name + '\'' +
                 ", status=" + status +
@@ -47,7 +43,6 @@ public class Session {
 
         Session session = (Session) o;
 
-        if (!submissionStartsOn.equals(session.submissionStartsOn)) return false;
         if (!startsOn.equals(session.startsOn)) return false;
         if (!name.equals(session.name)) return false;
         return status == session.status;
@@ -55,8 +50,7 @@ public class Session {
 
     @Override
     public int hashCode() {
-        int result = submissionStartsOn.hashCode();
-        result = 31 * result + startsOn.hashCode();
+        int result = startsOn.hashCode();
         result = 31 * result + name.hashCode();
         result = 31 * result + status.hashCode();
         return result;
@@ -68,14 +62,6 @@ public class Session {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Date getSubmissionStartsOn() {
-        return submissionStartsOn;
-    }
-
-    public void setSubmissionStartsOn(Date submissionStartsOn) {
-        this.submissionStartsOn = submissionStartsOn;
     }
 
     public Date getStartsOn() {
