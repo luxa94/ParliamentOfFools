@@ -41,6 +41,8 @@ import java.util.Optional;
 @Component
 public class ActRepository {
 
+    public static final String ACTS_COLLECTION = "fools/acts/collection";
+
     public Optional<Act> save(Act act, ByteArrayOutputStream metadataResult) {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
@@ -52,8 +54,10 @@ public class ActRepository {
             final JAXBHandle<Act> handle = new JAXBHandle<>(jaxbContext);
             handle.set(act);
 
-            documentManager.write("/acts/" + act.getId(), handle);
+            final DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle();
+            documentMetadataHandle.getCollections().add(ACTS_COLLECTION);
 
+            documentManager.write("/acts/" + act.getId(), documentMetadataHandle, handle);
 
             final GraphManager graphManager = client.newGraphManager();
             final String content = metadataResult.toString();
