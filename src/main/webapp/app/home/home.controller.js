@@ -10,13 +10,16 @@
         $scope.vm = vm;
         vm.user = $rootScope.user;
         vm.acts = [];
+        vm.searchTerm = "";
+
         vm.getPDF = getPDF;
+        vm.searchByTerm = searchByTerm;
         activate();
 
 
         function activate() {
 
-            var xml = xhttpService.get("/api/acts");
+            var xml = xhttpService.get("/api/acts?term=");
             var style = xhttpService.get("cdcatalog.xsl");
             if (document.implementation && document.implementation.createDocument)
             {
@@ -28,11 +31,14 @@
             }
         }
 
-
         function getPDF(actId) {
             debugger;
             console.log(actId);
             window.location.href = "api/acts/pdf/" + actId;
+        }
+
+        function searchByTerm() {
+
         }
 
 

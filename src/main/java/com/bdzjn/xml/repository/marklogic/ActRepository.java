@@ -2,6 +2,7 @@ package com.bdzjn.xml.repository.marklogic;
 
 import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.properties.MarkLogicConfiguration;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
@@ -11,6 +12,11 @@ import com.marklogic.client.io.*;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.semantics.SPARQLMimeTypes;
+import com.marklogic.client.semantics.SPARQLQueryDefinition;
+import com.marklogic.client.semantics.SPARQLQueryManager;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 
@@ -107,4 +113,31 @@ public class ActRepository {
         return acts;
     }
 
+    public List<Act> findByTerm(String term) {
+        final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
+                MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
+                MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
+
+        SPARQLQueryManager manager = client.newSPARQLQueryManager();
+
+        final SPARQLQueryDefinition query = manager.newQueryDefinition("SELECT * FROM <pof/act/metadata> WHERE { ?s ?p \"" +  term + "\"}");
+
+        JacksonHandle jacksonHandle = new JacksonHandle();
+        jacksonHandle.setMimetype(SPARQLMimeTypes.SPARQL_JSON);
+
+        jacksonHandle = manager.executeSelect(query, jacksonHandle);
+
+        final JsonNode tuples = jacksonHandle.get().path("results").path("bindings");
+
+        final List<Act> acts = new ArrayList<>();
+        tuples.forEach(node -> {
+            final String uri = node.path("s").path("value").asText();
+            final String[] tokens = uri.split("/");
+            final String id = tokens[tokens.length - 1];
+            findById(id).ifPresent(acts::add);
+        });
+
+        return acts;
+
+    }
 }

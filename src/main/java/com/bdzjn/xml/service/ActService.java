@@ -108,8 +108,12 @@ public class ActService {
         return actRepository.findById(id);
     }
 
-    public List<Act> findAll() {
-        return actRepository.findAll();
+    public List<Act> findAll(String term) {
+        if (term.isEmpty())
+            return actRepository.findAll();
+        else {
+            return actRepository.findByTerm(term);
+        }
     }
 
     public Optional<Act> update(Act act) {

@@ -46,8 +46,8 @@ public class ActController {
     }
 
     @GetMapping(produces = "application/xml")
-    public ResponseEntity findAll() {
-        final List<Act> acts = actService.findAll();
+    public ResponseEntity findAll(@RequestParam(required = false, defaultValue = "") String term) {
+        final List<Act> acts = actService.findAll(term);
         final ActWrapper actWrapper = new ActWrapper(acts);
         return new ResponseEntity<>(actWrapper, HttpStatus.OK);
     }

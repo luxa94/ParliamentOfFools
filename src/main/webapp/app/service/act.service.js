@@ -11,7 +11,8 @@
     function actService($http) {
         return {
             create: create,
-            generatePdf: generatePdf
+            generatePdf: generatePdf,
+            searchByTerm: searchByTerm
         };
 
         function create(act) {
@@ -25,6 +26,10 @@
 
         function generatePdf(actId) {
             return $http.get("api/acts/pdf/" + actId);
+        }
+
+        function searchByTerm(term) {
+            return $http.get()
         }
 
     }
