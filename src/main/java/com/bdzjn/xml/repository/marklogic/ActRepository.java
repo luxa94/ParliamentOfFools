@@ -9,8 +9,10 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.client.query.*;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.client.util.EditableNamespaceContext;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.JacksonHandle;
@@ -18,10 +20,13 @@ import com.marklogic.client.semantics.SPARQLMimeTypes;
 import com.marklogic.client.semantics.SPARQLQueryDefinition;
 import com.marklogic.client.semantics.SPARQLQueryManager;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -138,5 +143,41 @@ public class ActRepository {
 
         return acts;
 
+    }
+
+    public List<Act> findByText(String text) throws TransformerException {
+        String[] tokens = text.split("\\s+");
+        String criteria = tokens[0];
+
+        for (int i=1; i < tokens.length; i++) {
+            criteria += " OR " + tokens[i];
+        }
+
+        final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
+                MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
+                MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
+
+        QueryManager queryManager = client.newQueryManager();
+
+        StringQueryDefinition queryDefinition = queryManager.newStringDefinition();
+
+        queryDefinition.setCriteria(criteria);
+
+        SearchHandle results = queryManager.search(queryDefinition, new SearchHandle());
+
+        MatchDocumentSummary matches[] = results.getMatchResults();
+        MatchDocumentSummary result;
+
+        final List<Act> acts = new ArrayList<>();
+        for (int i = 0; i < matches.length; i++) {
+            result = matches[i];
+
+            String uriOfAct = result.getUri().substring(6);
+            findById(uriOfAct).ifPresent(acts::add);
+        }
+
+        client.release();
+
+        return acts;
     }
 }

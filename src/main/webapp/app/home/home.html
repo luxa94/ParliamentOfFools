@@ -2,6 +2,12 @@
     <div flex-gt-md="120" layout="column" layout-align="center center">
         <div>
             <md-input-container>
+                <label>Pretražite dokumente po njihovom sadržaju...</label>
+                <input type="text" ng-model="vm.searchText"/>
+            </md-input-container>
+            <md-button class="md-raised" ng-click="vm.searchByText()">Traži</md-button>
+
+            <md-input-container>
                 <label>Unesite ključne reči pretrage...</label>
                 <input type="text" ng-model="vm.searchTerm"/>
             </md-input-container>

@@ -4,38 +4,63 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format" version="2.0">
 
     <xsl:output encoding="UTF-8" indent="yes" method="xml"/>
+
     <xsl:template name="renderArticle">
         <xsl:for-each select="a:article">
 
-            <fo:block font-weight="bold" text-align="center" font-size="20px">
-                Član <xsl:value-of select="position()"/>
-            </fo:block>
+            <fo:block font-family="sans-serif" font-size="16px" text-align="center">
+                Clan <xsl:value-of select="@id  + 1"/>
+            </fo:block>-->
 
             <xsl:for-each select="a:paragraph">
                 <xsl:for-each select="a:text/a:contentItem">
-
-                    <fo:block font-family="sans-serif" font-size="12px" padding="10px" text-align="start">
-                        <xsl:value-of select="."/>
-                    </fo:block>
-
+                    <fo:block><xsl:value-of select="."/></fo:block>
                 </xsl:for-each>
-
                 <xsl:for-each select="a:item">
-
-                    <fo:block>
-                        <xsl:value-of select="position()"/>)
+                    <fo:block text-align="start" padding-left= "2em" padding-right="2em"><xsl:value-of select="position()"/>)
                         <xsl:for-each select="a:text/a:contentItem">
-
-                            <fo-block><xsl:value-of select="."/></fo-block>
-
+                            <fo:block><xsl:value-of select="."/></fo:block>
                         </xsl:for-each>
                     </fo:block>
-                    <!--<xsl:for-each select="a:subItem">-->
-                    <!--<p>&nbsp;(<xsl:value-of select="position()"/>) <xsl:value-of select="a:text/a:contentItem"/></p>-->
-                    <!--<xsl:for-each select="a:ident">-->
-                    <!--<p>&nbsp;&nbsp;-(<xsl:value-of select="position()"/>) <xsl:value-of select="a:text/a:contentItem"/></p>-->
-                    <!--</xsl:for-each>-->
-                    <!--</xsl:for-each>-->
+                    <xsl:for-each select="a:subItem">
+                        <fo:block text-align="start" padding-left= "3em" padding-right="3em">(<xsl:value-of select="position()"/>)
+                            <xsl:for-each select="a:text/a:contentItem">
+                                <fo:block><xsl:value-of select="."/></fo:block>
+                            </xsl:for-each>
+                        </fo:block>
+                        <xsl:for-each select="a:ident">
+                            <fo:block text-align="start" padding-left= "5em" padding-right="5em">-<xsl:value-of select="a:contentItem"/></fo:block>
+                        </xsl:for-each>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </xsl:for-each>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name = "renderHead">
+        <xsl:for-each select="a:head">
+
+            <fo:block font-weight="bold" text-align="center" font-size="18px">
+                Glava <xsl:value-of select="position()"/>
+            </fo:block>-->
+
+            <xsl:call-template name="renderArticle" />
+
+            <xsl:for-each select="a:section">
+
+                <fo:block text-align="center" font-size="16px">
+                    Odeljak <xsl:value-of select="position()"/>
+                </fo:block>
+
+                <xsl:call-template name="renderArticle" />
+
+                <xsl:for-each select="a:subsection">
+
+                    <fo:block text-align="center" font-size="14px">
+                        Pododeljak <xsl:value-of select="position()"/>
+                    </fo:block>
+
+                    <xsl:call-template name="renderArticle" />
                 </xsl:for-each>
             </xsl:for-each>
         </xsl:for-each>
@@ -65,6 +90,9 @@
                         <xsl:value-of select="@title"/>
                     </fo:block>
 
+                    <xsl:call-template name="renderArticle" />
+                    <xsl:call-template name="renderHead" />
+
                     <xsl:for-each select="a:part">
 
                         <fo:block font-weight="bold" text-align="center" font-size="20px">
@@ -72,35 +100,7 @@
                         </fo:block>
 
                         <xsl:call-template name="renderArticle" />
-
-                        <xsl:for-each select="a:head">
-
-                            <fo:block font-weight="bold" text-align="center" font-size="18px">
-                                Glava <xsl:value-of select="position()"/>
-                            </fo:block>
-
-
-                            <xsl:call-template name="renderArticle" />
-
-                            <xsl:for-each select="a:section">
-
-                                <fo:block text-align="center" font-size="16px">
-                                    Odeljak <xsl:value-of select="position()"/>
-                                </fo:block>
-
-                                <xsl:call-template name="renderArticle" />
-
-                                <xsl:for-each select="a:subsection">
-
-                                    <fo:block text-align="center" font-size="14px">
-                                        Pododeljak <xsl:value-of select="position()"/>
-                                    </fo:block>
-
-                                    <xsl:call-template name="renderArticle" />
-
-                                </xsl:for-each>
-                            </xsl:for-each>
-                        </xsl:for-each>
+                        <xsl:call-template name="renderHead" />
                     </xsl:for-each>
 
                 </fo:flow>

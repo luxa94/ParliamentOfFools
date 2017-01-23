@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -108,11 +109,15 @@ public class ActService {
         return actRepository.findById(id);
     }
 
-    public List<Act> findAll(String term) {
-        if (term.isEmpty())
-            return actRepository.findAll();
-        else {
+    public List<Act> findAll(String term, String text) throws TransformerException {
+        if (!term.isEmpty()) {
             return actRepository.findByTerm(term);
+        }
+        else if (!text.isEmpty()){
+            return actRepository.findByText(text);
+        }
+        else {
+            return actRepository.findAll();
         }
     }
 

@@ -12,18 +12,20 @@
         vm.acts = [];
         vm.searchTerm = "";
         vm.statusTerm = "";
+        vm.searchText = "";
 
         vm.getPDF = getPDF;
         vm.searchByTerm = searchByTerm;
+        vm.searchByText = searchByText;
         vm.onStatusChoice = onStatusChoice;
 
-        activate("");
+        activate("","");
 
 
-        function activate(term) {
+        function activate(term, text) {
 
-            var xml = xhttpService.get("/api/acts?term=" + term);
-            var style = xhttpService.get("cdcatalog.xsl");
+            var xml = xhttpService.get("/api/acts?term=" + term + "&text=" + text);
+            var style = xhttpService.get("acts.xsl");
             if (document.implementation && document.implementation.createDocument)
             {
                 var xsltProcessor = new XSLTProcessor();
@@ -40,11 +42,15 @@
         }
 
         function searchByTerm() {
-            activate(vm.searchTerm);
+            activate(vm.searchTerm, "");
         }
 
         function onStatusChoice() {
-            activate(vm.statusTerm);
+            activate(vm.statusTerm, "");
+        }
+
+        function searchByText() {
+            activate("", vm.searchText)
         }
 
 

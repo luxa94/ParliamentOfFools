@@ -53,8 +53,9 @@ public class ActController {
     }
 
     @GetMapping(produces = "application/xml")
-    public ResponseEntity findAll(@RequestParam(required = false, defaultValue = "") String term) {
-        final List<Act> acts = actService.findAll(term);
+    public ResponseEntity findAll(@RequestParam(required = false, defaultValue = "") String term,
+                                  @RequestParam(required = false, defaultValue = "") String text) throws TransformerException {
+        final List<Act> acts = actService.findAll(term, text);
         final ActWrapper actWrapper = new ActWrapper(acts);
         return new ResponseEntity<>(actWrapper, HttpStatus.OK);
     }
