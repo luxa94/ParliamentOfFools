@@ -13,34 +13,32 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for amendmentType.
+ * <p>Java class for placementType.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="amendmentType"&gt;
+ * &lt;simpleType name="placementType"&gt;
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
- *     &lt;enumeration value="INSERT"/&gt;
- *     &lt;enumeration value="UPDATE"/&gt;
- *     &lt;enumeration value="DELETE"/&gt;
+ *     &lt;enumeration value="BEFORE"/&gt;
+ *     &lt;enumeration value="AFTER"/&gt;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
  * 
  */
-@XmlType(name = "amendmentType")
+@XmlType(name = "placementType")
 @XmlEnum
-public enum AmendmentType {
+public enum PlacementType {
 
-    INSERT,
-    UPDATE,
-    DELETE;
+    BEFORE,
+    AFTER;
 
     public String value() {
         return name();
     }
 
-    public static AmendmentType fromValue(String v) {
+    public static PlacementType fromValue(String v) {
         return valueOf(v);
     }
 

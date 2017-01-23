@@ -5,6 +5,7 @@ import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.DocumentStatus;
 import com.bdzjn.xml.repository.marklogic.ActRepository;
 import com.bdzjn.xml.util.DateConverter;
+import com.bdzjn.xml.util.MetadataExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -69,7 +70,7 @@ public class ActService {
 
             final String newXml = writer.getBuffer().toString();
 
-            final ByteArrayOutputStream metadataResult = generateMetadata(newXml);
+            final ByteArrayOutputStream metadataResult = MetadataExtractor.extractMetadata(newXml, RDF_XSL);
 
             final Act act = JAXB.unmarshal(new StringReader(newXml), Act.class);
 
@@ -78,24 +79,6 @@ public class ActService {
             e.printStackTrace();
         }
         return Optional.empty();
-    }
-
-    private ByteArrayOutputStream generateMetadata(String newXml) throws Exception {
-        StreamSource transformSource = new StreamSource(RDF_XSL);
-        StreamSource source = new StreamSource(new ByteArrayInputStream(newXml.getBytes()));
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        final Transformer transformer = transformerFactory.newTransformer(transformSource);
-
-        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        final StreamResult outputTarget = new StreamResult(byteArrayOutputStream);
-
-        transformer.transform(source, outputTarget);
-
-        return byteArrayOutputStream;
     }
 
     private void populateIdFor(String tagName, Document doc) {

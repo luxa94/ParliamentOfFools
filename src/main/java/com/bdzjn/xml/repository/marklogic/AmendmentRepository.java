@@ -5,11 +5,16 @@ import com.bdzjn.xml.properties.MarkLogicConfiguration;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +22,9 @@ import java.util.Optional;
 @Component
 public class AmendmentRepository {
 
-    public Optional<Amendment> save(Amendment amendment) {
+    private static final String AMENDMENTS_COLLECTION = "fools/amendments/collection";
+
+    public Optional<Amendment> save(Amendment amendment, ByteArrayOutputStream metadataStream) {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
                 MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
@@ -28,7 +35,16 @@ public class AmendmentRepository {
             final JAXBHandle<Amendment> handle = new JAXBHandle<>(jaxbContext);
             handle.set(amendment);
 
-            documentManager.write("/amendments/" + amendment.getId(), handle);
+            final DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle();
+            documentMetadataHandle.getCollections().add(AMENDMENTS_COLLECTION);
+
+            documentManager.write("/amendments/" + amendment.getId(), documentMetadataHandle, handle);
+
+            final GraphManager graphManager = client.newGraphManager();
+            final String content = metadataStream.toString();
+
+            final StringHandle stringHandle = new StringHandle(content).withMimetype(RDFMimeTypes.RDFXML);
+            graphManager.merge("pof/amendments/metadata", stringHandle);
 
             client.release();
             return Optional.of(amendment);

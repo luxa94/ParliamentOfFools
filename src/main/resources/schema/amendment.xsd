@@ -1,29 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:act="http://www.fools.gov.rs/acts"
            elementFormDefault="qualified"
            targetNamespace="http://www.fools.gov.rs/acts"
            xmlns="http://www.fools.gov.rs/acts"
            jxb:version="2.0">
 
     <xs:include schemaLocation="act.xsd"/>
+
+    <xs:element name="amendmentItem">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="elementName" type="xs:string"/>
+                <xs:element name="elementId" type="xs:string"/>
+                <xs:choice>
+                    <xs:element ref="article"/>
+                    <xs:element ref="paragraph"/>
+                    <xs:element ref="item"/>
+                    <xs:element ref="subItem"/>
+                    <xs:element ref="ident"/>
+                </xs:choice>
+            </xs:sequence>
+
+            <xs:attribute name="placement" type="placementType" use="required"/>
+            <xs:attribute name="type" type="amendmentType" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="amendment">
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="description"/>
-                <xs:element ref="act:article" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="amendmentItem" minOccurs="1" maxOccurs="unbounded"/>
             </xs:sequence>
 
             <xs:attribute name="date" type="javaDate" use="required"/>
             <xs:attribute name="id" type="xs:ID" use="required"/>
             <xs:attribute name="name" type="xs:string" use="required"/>
             <xs:attribute name="actId" type="xs:IDREF" use="required"/>
-            <xs:attribute name="articleId" type="xs:IDREF"/>
-            <xs:attribute name="type" type="amendmentType" use="required"/>
             <xs:attribute name="status" type="documentStatus" use="required"/>
         </xs:complexType>
     </xs:element>
+
+    <xs:simpleType name="placementType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="BEFORE"/>
+            <xs:enumeration value="AFTER"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:simpleType name="amendmentType">
         <xs:restriction base="xs:token">
