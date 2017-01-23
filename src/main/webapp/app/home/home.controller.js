@@ -11,15 +11,18 @@
         vm.user = $rootScope.user;
         vm.acts = [];
         vm.searchTerm = "";
+        vm.statusTerm = "";
 
         vm.getPDF = getPDF;
         vm.searchByTerm = searchByTerm;
-        activate();
+        vm.onStatusChoice = onStatusChoice;
+
+        activate("");
 
 
-        function activate() {
+        function activate(term) {
 
-            var xml = xhttpService.get("/api/acts?term=" + vm.searchTerm);
+            var xml = xhttpService.get("/api/acts?term=" + term);
             var style = xhttpService.get("cdcatalog.xsl");
             if (document.implementation && document.implementation.createDocument)
             {
@@ -33,13 +36,15 @@
         }
 
         function getPDF(actId) {
-            debugger;
-            console.log(actId);
             window.location.href = "api/acts/pdf/" + actId;
         }
 
         function searchByTerm() {
-            activate();
+            activate(vm.searchTerm);
+        }
+
+        function onStatusChoice() {
+            activate(vm.statusTerm);
         }
 
 
