@@ -19,7 +19,7 @@
 
         function activate() {
 
-            var xml = xhttpService.get("/api/acts?term=");
+            var xml = xhttpService.get("/api/acts?term=" + vm.searchTerm);
             var style = xhttpService.get("cdcatalog.xsl");
             if (document.implementation && document.implementation.createDocument)
             {
@@ -27,6 +27,7 @@
                 xsltProcessor.importStylesheet(style);
                 var resultDocument = xsltProcessor.transformToFragment(xml, document);
                 var allActs = document.getElementById('allActs');
+                angular.element(allActs).empty();
                 angular.element(allActs).append($compile(resultDocument)($scope));
             }
         }
@@ -38,7 +39,7 @@
         }
 
         function searchByTerm() {
-
+            activate();
         }
 
 
