@@ -7,7 +7,10 @@ import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.wrapper.ActWrapper;
 import com.bdzjn.xml.service.ActService;
+import com.bdzjn.xml.service.ExportService;
 import com.bdzjn.xml.service.PdfService;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.semantics.RDFMimeTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.util.List;
 
@@ -31,10 +35,13 @@ public class ActController {
 
     private final PdfService pdfService;
 
+    private final ExportService exportService;
+
     @Autowired
-    public ActController(ActService actService, PdfService pdfService) {
+    public ActController(ActService actService, PdfService pdfService, ExportService exportService) {
         this.actService = actService;
         this.pdfService = pdfService;
+        this.exportService = exportService;
     }
 
     @PreAuthorize("hasAnyAuthority('ALDERMAN', 'PRESIDENT')")
@@ -74,7 +81,7 @@ public class ActController {
         return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
     }
 
-    @GetMapping(value="/pdf/{actId}", produces = "application/pdf")
+    @GetMapping(value = "/pdf/{actId}", produces = "application/pdf")
     public ResponseEntity downloadPdf(@PathVariable String actId) throws Exception {
 
         final Act act = actService.findById(actId).orElseThrow(NotFoundException::new);
@@ -97,6 +104,18 @@ public class ActController {
                 .contentType(
                         MediaType.parseMediaType("application/pdf"))
                 .body(bytes);
+    }
+
+    @GetMapping(value = "/export/rdf")
+    public ResponseEntity exportMetadataAsRdf() throws TransformerException, FileNotFoundException {
+        exportService.exportMetadataAs(RDFMimeTypes.RDFXML, Format.XML,"pof/act/metadata", "src/main/resources/export/act_metadata.rdf");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping(value="/export/json")
+    public ResponseEntity exportMetadataAsJson() throws TransformerException, FileNotFoundException {
+        exportService.exportMetadataAs(RDFMimeTypes.RDFJSON, Format.JSON,"pof/act/metadata", "src/main/resources/export/act_metadata.json");
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

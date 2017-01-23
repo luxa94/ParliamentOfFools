@@ -51,7 +51,6 @@ public class ActRepository {
 
 
             final GraphManager graphManager = client.newGraphManager();
-            graphManager.setDefaultMimetype(RDFMimeTypes.RDFXML);
             final String content = metadataResult.toString();
 
             final StringHandle stringHandle = new StringHandle(content).withMimetype(RDFMimeTypes.RDFXML);
