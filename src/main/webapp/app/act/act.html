@@ -1,5 +1,44 @@
-<section layout layout-align="center center">
-    <div id="act" class="oneAct" flex="70" md-whiteframe="1"  layout-padding layout-align="center center">
+<div layout="column" layout-align="stretch center">
+    <section layout layout-align="center center">
+        <div id="act" class="oneAct" flex="70" md-whiteframe="1" layout-padding layout-align="center center">
 
+        </div>
+    </section>
+
+    <div layout="column" layout-align="stretch center">
+        <form novalidate name="newAmendmentForm" ng-if="vm.activeSession && vm.activeSession.status === 'ANNOUNCED' && vm.status =='PENDING'">
+            <md-card flex layout="column">
+                <md-card-title>
+                    <p class="md-headline">Create a new amendment</p>
+                </md-card-title>
+                <md-content flex layout="column" class="md-padding">
+                    <textarea rows="30" ng-model="vm.amendment" required style="resize: vertical;"></textarea>
+                </md-content>
+
+                <md-card-actions flex layout="row" layout-align="end center">
+                    <md-button ng-disabled="newAmendmentForm.$invalid" ng-click="vm.cancelAmendment()">Cancel</md-button>
+                    <md-button type="submit" ng-click="vm.submitAmendment()" class="md-accent md-raised"
+                               ng-disabled="newAmendmentForm.$invalid">Submit
+                    </md-button>
+                </md-card-actions>
+            </md-card>
+        </form>
+
+        <div flex ng-if="vm.status === 'ACCEPTED'">
+            <h1>Can not add an amendment to an accepted Act.</h1>
+        </div>
+
+        <div flex ng-if="vm.status === 'REJECTED'">
+            <h1>Can not add an amendment to an rejected Act.</h1>
+        </div>
+
+        <div flex ng-if="vm.activeSession && vm.activeSession.status !== 'ANNOUNCED'">
+            <h1>There is no announced session.</h1>
+        </div>
+
+        <div flex ng-if="!vm.activeSession">
+            <h1>There is no announced session.</h1>
+        </div>
     </div>
-</section>
+
+</div>

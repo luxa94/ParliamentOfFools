@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:a="http://www.fools.gov.rs/acts"
-                xmlns:predicate="http://www.fools.gov.rs/acts/"
+                xmlns:predicate="http://www.fools.gov.rs/amendments/"
                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
     <!--<xsl:template match="/">-->
@@ -15,7 +15,7 @@
 
     <xsl:template match="/a:amendment">
         <rdf:RDF>
-            <rdf:Description rdf:about="http://www.fools.gov.rs/acts/{@id}">
+            <rdf:Description rdf:about="http://www.fools.gov.rs/amendments/{@id}">
                 <predicate:date><xsl:value-of select="@date"/></predicate:date>
                 <predicate:name><xsl:value-of select="@name"/></predicate:name>
                 <predicate:actId><xsl:value-of select="@actId"/></predicate:actId>

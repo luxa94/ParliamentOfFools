@@ -20,7 +20,7 @@ import java.io.PrintWriter;
 @Service
 public class ExportService {
 
-    public void exportMetadataAs(String mimeType, Format format, String namedGraphUri, String outputFilePath) throws TransformerException, FileNotFoundException {
+    public String exportMetadataAs(String mimeType, Format format, String namedGraphUri, String outputFilePath) throws TransformerException, FileNotFoundException {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
                 MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
@@ -28,11 +28,8 @@ public class ExportService {
         GraphManager graphManager = client.newGraphManager();
         String content = graphManager.read(namedGraphUri,
                 new StringHandle().withMimetype(mimeType)).withFormat(format).get();
-
-        PrintWriter out = new PrintWriter(outputFilePath);
-        out.println(content);
-        out.close();
-
         client.release();
+
+        return content;
     }
 }

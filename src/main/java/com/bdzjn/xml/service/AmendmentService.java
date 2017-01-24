@@ -36,13 +36,14 @@ public class AmendmentService {
         this.amendmentRepository = amendmentRepository;
     }
 
-    public Optional<Amendment> create(String rawAmendment) {
+    public Optional<Amendment> create(String rawAmendment, String actId) {
         try {
             final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawAmendment.getBytes(Charset.defaultCharset()));
             final Document doc = documentBuilder.parse(byteArrayInputStream);
 
             doc.getDocumentElement().setAttribute("id", UUID.randomUUID().toString());
+            doc.getDocumentElement().setAttribute("actId", actId);
 
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");

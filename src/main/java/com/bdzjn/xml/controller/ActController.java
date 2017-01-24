@@ -109,14 +109,14 @@ public class ActController {
 
     @GetMapping(value = "/export/rdf")
     public ResponseEntity exportMetadataAsRdf() throws TransformerException, FileNotFoundException {
-        exportService.exportMetadataAs(RDFMimeTypes.RDFXML, Format.XML,"pof/act/metadata", "src/main/resources/export/act_metadata.rdf");
-        return new ResponseEntity(HttpStatus.OK);
+        final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFXML, Format.XML,"pof/act/metadata", "src/main/resources/export/act_metadata.rdf");
+        return new ResponseEntity<>(metadata, HttpStatus.OK);
     }
 
     @GetMapping(value="/export/json")
     public ResponseEntity exportMetadataAsJson() throws TransformerException, FileNotFoundException {
-        exportService.exportMetadataAs(RDFMimeTypes.RDFJSON, Format.JSON,"pof/act/metadata", "src/main/resources/export/act_metadata.json");
-        return new ResponseEntity(HttpStatus.OK);
+        final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFJSON, Format.JSON, "pof/act/metadata", "src/main/resources/export/act_metadata.json");
+        return new ResponseEntity<>(metadata, HttpStatus.OK);
     }
 
 }

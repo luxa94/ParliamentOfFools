@@ -15,7 +15,7 @@ Aplikacija za vodjenje pravnih akata i amandmana. >.>
 
 Mora postojati lokalna MySQL baza podataka sa korisnikom **root** koji ima šifru **root**, i u njoj šema **parliament**.
 ```sql
-CREATE SCHEMA `poretti` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA `parliament` DEFAULT CHARACTER SET utf8 ;
 ```
 
 Takodje, mora postojati i lokalni MarkLogic server, sa bazom nazvanom **xml**, i korisnik **root** koji ima šifru **root** za pristup MarkLogic bazi.

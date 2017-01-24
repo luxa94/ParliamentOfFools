@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendment xmlns="http://www.fools.gov.rs/acts" date="2006-05-04" id="ID000" name="name0" actId="ID000"
+           status="PENDING">
+    <description>description0</description>
+    <amendmentItem placement="BEFORE" type="INSERT">
+        <elementName>elementName0</elementName>
+        <elementId>elementId0</elementId>
+        <ident>
+            <contentItem>contentItem0</contentItem>
+            <contentItem>contentItem1</contentItem>
+        </ident>
+    </amendmentItem>
+    <amendmentItem placement="BEFORE" type="INSERT">
+        <elementName>elementName1</elementName>
+        <elementId>elementId1</elementId>
+        <subItem>
+            <ident>
+                <contentItem>contentItem2</contentItem>
+                <contentItem>contentItem3</contentItem>
+            </ident>
+            <ident>
+                <contentItem>contentItem4</contentItem>
+                <contentItem>contentItem5</contentItem>
+            </ident>
+            <text>
+                <contentItem>contentItem6</contentItem>
+                <contentItem>contentItem7</contentItem>
+            </text>
+        </subItem>
+    </amendmentItem>
+</amendment>
