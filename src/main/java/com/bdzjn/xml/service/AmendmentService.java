@@ -1,6 +1,7 @@
 package com.bdzjn.xml.service;
 
 
+import com.bdzjn.xml.controller.dto.VoteDTO;
 import com.bdzjn.xml.model.act.Amendment;
 import com.bdzjn.xml.repository.marklogic.AmendmentRepository;
 import com.bdzjn.xml.util.MetadataExtractor;
@@ -64,4 +65,14 @@ public class AmendmentService {
         return Optional.empty();
     }
 
+    public void vote(String id, VoteDTO voteDTO) {
+        String actStatus;
+        if (voteDTO.getNumberOfFor() > voteDTO.getNumberAgainst()) {
+            actStatus = "ACCEPTED";
+        } else {
+            actStatus = "REJECTED";
+        }
+
+        amendmentRepository.updateAmendmentStatus(id, actStatus);
+    }
 }

@@ -1,0 +1,16 @@
+{
+  "http://www.fools.gov.rs/acts/cc2bc06d-b0a3-4e19-ad10-88fcfa1d4ef8": {
+    "http://www.fools.gov.rs/acts/status": [
+      {
+        "value": "ACCEPTED",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      },
+      {
+        "value": "REJECTED",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  }
+}

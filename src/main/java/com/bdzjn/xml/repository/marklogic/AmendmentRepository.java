@@ -2,14 +2,20 @@ package com.bdzjn.xml.repository.marklogic;
 
 import com.bdzjn.xml.model.act.Amendment;
 import com.bdzjn.xml.properties.MarkLogicConfiguration;
+import com.bdzjn.xml.util.RdfTripleUpdate;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.document.DocumentPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.marker.DocumentPatchHandle;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.client.semantics.SPARQLQueryDefinition;
+import com.marklogic.client.semantics.SPARQLQueryManager;
+import com.marklogic.client.util.EditableNamespaceContext;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBContext;
@@ -80,4 +86,35 @@ public class AmendmentRepository {
         return new ArrayList<>();
     }
 
+    public void updateAmendmentStatus(String amendmentId, String newStatus) {
+        final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
+                MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
+                MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
+
+        XMLDocumentManager xmlManager = client.newXMLDocumentManager();
+
+        EditableNamespaceContext namespaces = new EditableNamespaceContext();
+        namespaces.put("a", "http://www.fools.gov.rs/acts");
+        namespaces.put("fn", "http://www.w3.org/2005/xpath-functions");
+
+        DocumentPatchBuilder patchBuilder = xmlManager.newPatchBuilder();
+        patchBuilder.setNamespaces(namespaces);
+
+        final String actStatusContextPath = "/a:amendment/@status";
+        patchBuilder.replaceValue(actStatusContextPath, newStatus);
+
+        DocumentPatchHandle patchHandle = patchBuilder.build();
+
+        xmlManager.patch("/amendments/" + amendmentId, patchHandle);
+        SPARQLQueryManager sqm = client.newSPARQLQueryManager();
+
+        SPARQLQueryManager sparqlQueryManager = client.newSPARQLQueryManager();
+
+        String subject = "http://www.fools.gov.rs/amendments/" + amendmentId;
+        String predicate = "http://www.fools.gov.rs/amendments/status";
+        RdfTripleUpdate.updateTriple(sparqlQueryManager, "pof/amendments/metadata", subject, predicate, newStatus);
+
+
+        client.release();
+    }
 }

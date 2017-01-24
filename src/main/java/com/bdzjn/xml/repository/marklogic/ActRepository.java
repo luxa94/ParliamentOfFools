@@ -2,13 +2,16 @@ package com.bdzjn.xml.repository.marklogic;
 
 import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.properties.MarkLogicConfiguration;
+import com.bdzjn.xml.util.RdfTripleUpdate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.document.DocumentPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.client.io.marker.DocumentPatchHandle;
 import com.marklogic.client.query.*;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
@@ -59,11 +62,7 @@ public class ActRepository {
 
             documentManager.write("/acts/" + act.getId(), documentMetadataHandle, handle);
 
-            final GraphManager graphManager = client.newGraphManager();
-            final String content = metadataResult.toString();
-
-            final StringHandle stringHandle = new StringHandle(content).withMimetype(RDFMimeTypes.RDFXML);
-            graphManager.merge("pof/act/metadata", stringHandle);
+            saveMetadata(metadataResult, client);
 
             client.release();
             return Optional.of(act);
@@ -72,6 +71,14 @@ public class ActRepository {
             client.release();
             return Optional.empty();
         }
+    }
+
+    private void saveMetadata(ByteArrayOutputStream metadataResult, DatabaseClient client) {
+        final GraphManager graphManager = client.newGraphManager();
+        final String content = metadataResult.toString();
+
+        final StringHandle stringHandle = new StringHandle(content).withMimetype(RDFMimeTypes.RDFXML);
+        graphManager.merge("pof/act/metadata", stringHandle);
     }
 
     public Optional<Act> findById(String id) {
@@ -128,7 +135,7 @@ public class ActRepository {
 
         SPARQLQueryManager manager = client.newSPARQLQueryManager();
 
-        final SPARQLQueryDefinition query = manager.newQueryDefinition("SELECT * FROM <pof/act/metadata> WHERE { ?s ?p \"" +  term + "\"}");
+        final SPARQLQueryDefinition query = manager.newQueryDefinition("SELECT * FROM <pof/act/metadata> WHERE { ?s ?p \"" + term + "\"}");
 
         JacksonHandle jacksonHandle = new JacksonHandle();
         jacksonHandle.setMimetype(SPARQLMimeTypes.SPARQL_JSON);
@@ -153,7 +160,7 @@ public class ActRepository {
         String[] tokens = text.split("\\s+");
         String criteria = tokens[0];
 
-        for (int i=1; i < tokens.length; i++) {
+        for (int i = 1; i < tokens.length; i++) {
             criteria += " OR " + tokens[i];
         }
 
@@ -163,25 +170,61 @@ public class ActRepository {
 
         QueryManager queryManager = client.newQueryManager();
 
-        StringQueryDefinition queryDefinition = queryManager.newStringDefinition();
+        StructuredQueryBuilder qb = queryManager.newStructuredQueryBuilder();
 
-        queryDefinition.setCriteria(criteria);
+//        StructuredQueryDefinition queryDefinition = qb
 
-        SearchHandle results = queryManager.search(queryDefinition, new SearchHandle());
+        //queryDefinition.setCriteria(criteria);
 
-        MatchDocumentSummary matches[] = results.getMatchResults();
-        MatchDocumentSummary result;
+        //SearchHandle results = queryManager.search(queryDefinition, new SearchHandle());
 
-        final List<Act> acts = new ArrayList<>();
-        for (int i = 0; i < matches.length; i++) {
-            result = matches[i];
-
-            String uriOfAct = result.getUri().substring(6);
-            findById(uriOfAct).ifPresent(acts::add);
-        }
+//        MatchDocumentSummary matches[] = results.getMatchResults();
+//        MatchDocumentSummary result;
+//
+//        final List<Act> acts = new ArrayList<>();
+//        for (int i = 0; i < matches.length; i++) {
+//            result = matches[i];
+//
+//            String uriOfAct = result.getUri().substring(6);
+//            findById(uriOfAct).ifPresent(acts::add);
+//        }
 
         client.release();
 
-        return acts;
+        return null;
+    }
+
+
+    public void updateActStatus(String actId, String newStatus) {
+        final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
+                MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
+                MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
+
+        XMLDocumentManager xmlManager = client.newXMLDocumentManager();
+
+        EditableNamespaceContext namespaces = new EditableNamespaceContext();
+        namespaces.put("a", "http://www.fools.gov.rs/acts");
+        namespaces.put("fn", "http://www.w3.org/2005/xpath-functions");
+
+        DocumentPatchBuilder patchBuilder = xmlManager.newPatchBuilder();
+        patchBuilder.setNamespaces(namespaces);
+
+        final String actStatusContextPath = "/a:act/@status";
+        patchBuilder.replaceValue(actStatusContextPath, newStatus);
+
+        DocumentPatchHandle patchHandle = patchBuilder.build();
+
+        xmlManager.patch("/acts/" + actId, patchHandle);
+        SPARQLQueryManager sparqlQueryManager = client.newSPARQLQueryManager();
+
+        String subject = "http://www.fools.gov.rs/acts/" + actId;
+        String predicate = "http://www.fools.gov.rs/acts/status";
+        RdfTripleUpdate.updateTriple(sparqlQueryManager, "pof/act/metadata", subject, predicate, newStatus);
+
+        client.release();
+    }
+
+    public static void updateRDFStringObject(String id, String resource, String predicate, String value, SPARQLQueryManager sparqlQueryManager) {
+
     }
 }

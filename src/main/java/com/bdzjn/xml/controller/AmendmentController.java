@@ -1,5 +1,6 @@
 package com.bdzjn.xml.controller;
 
+import com.bdzjn.xml.controller.dto.VoteDTO;
 import com.bdzjn.xml.controller.exception.NotFoundException;
 import com.bdzjn.xml.controller.exception.UnprocessableEntityException;
 import com.bdzjn.xml.model.act.Amendment;
@@ -8,6 +9,7 @@ import com.bdzjn.xml.service.AmendmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,5 +35,13 @@ public class AmendmentController {
         actService.findById(actId).orElseThrow(NotFoundException::new);
         final Amendment newAmendment = amendmentService.create(rawAmendment, actId).orElseThrow(UnprocessableEntityException::new);
         return new ResponseEntity<>(newAmendment, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('PRESIDENT')")
+    @PutMapping("/{id}/vote")
+    public ResponseEntity vote(@RequestBody VoteDTO voteDTO,
+                               @PathVariable String id) {
+        amendmentService.vote(id, voteDTO);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

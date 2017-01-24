@@ -78,8 +78,9 @@ public class ActController {
     @PreAuthorize("hasAnyAuthority('PRESIDENT')")
     @PutMapping("/{id}/vote")
     public ResponseEntity vote(@RequestBody VoteDTO voteDTO,
-                               @PathVariable long id) {
-        return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
+                               @PathVariable String id) {
+        actService.vote(id, voteDTO);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping(value = "/pdf/{actId}", produces = "application/pdf")

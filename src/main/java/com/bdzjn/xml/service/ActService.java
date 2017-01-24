@@ -1,5 +1,6 @@
 package com.bdzjn.xml.service;
 
+import com.bdzjn.xml.controller.dto.VoteDTO;
 import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.DocumentStatus;
@@ -106,5 +107,16 @@ public class ActService {
 
     public Optional<Act> update(Act act) {
         return actRepository.save(act, new ByteArrayOutputStream());
+    }
+
+    public void vote(String id, VoteDTO voteDTO) {
+        String actStatus;
+        if (voteDTO.getNumberOfFor() > voteDTO.getNumberAgainst()) {
+            actStatus = "ACCEPTED";
+        } else {
+            actStatus = "REJECTED";
+        }
+
+        actRepository.updateActStatus(id, actStatus);
     }
 }
