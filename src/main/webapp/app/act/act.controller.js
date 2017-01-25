@@ -5,10 +5,9 @@
         .module('parliament')
         .controller('actController', actController);
 
-    actController.$inject = ['$stateParams', 'xhttpService', '$http', '$rootScope', 'Alertify', '$state'];
+    actController.$inject = ['$stateParams', 'xhttpService', 'actService', '$http', '$rootScope', 'Alertify', '$state'];
 
-    function actController($stateParams, xhttpService, $http, $rootScope, Alertify, $state) {
-        var ID = PREFIX + $stateParams.id;
+    function actController($stateParams, xhttpService, actService, $http, $rootScope, Alertify, $state) {
 
         var vm = this;
         vm.activeSession = $rootScope.activeSession;

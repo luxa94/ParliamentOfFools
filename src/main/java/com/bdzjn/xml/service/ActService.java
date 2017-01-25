@@ -20,7 +20,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -114,7 +113,7 @@ public class ActService {
         return actRepository.save(act, new ByteArrayOutputStream());
     }
 
-    public void vote(String id, VoteDTO voteDTO) {
+    public String vote(String id, VoteDTO voteDTO) {
         String actStatus;
         if (voteDTO.getNumberOfFor() > voteDTO.getNumberAgainst()) {
             actStatus = "ACCEPTED";
@@ -123,6 +122,7 @@ public class ActService {
         }
 
         actRepository.updateActStatus(id, actStatus);
+        return actStatus;
     }
 
     public List<Amendment> findAmendments(String id) {

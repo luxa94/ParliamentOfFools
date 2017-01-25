@@ -90,8 +90,8 @@ public class ActController {
     @PutMapping("/{id}/vote")
     public ResponseEntity vote(@RequestBody VoteDTO voteDTO,
                                @PathVariable String id) {
-        actService.vote(id, voteDTO);
-        return new ResponseEntity(HttpStatus.OK);
+        String status = actService.vote(id, voteDTO);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @GetMapping(value = "/pdf/{actId}", produces = "application/pdf")

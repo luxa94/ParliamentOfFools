@@ -23,7 +23,7 @@
                 method: 'POST',
                 url: BASE_URL,
                 data: act,
-                headers: { "Content-Type": 'application/xml' }
+                headers: {"Content-Type": 'application/xml'}
             });
         }
 
@@ -32,11 +32,11 @@
         }
 
         function vote(actId, vote) {
-            return $http.put("api/acts/" + actId + "/vote");
+            return $http.put("api/acts/" + actId + "/vote", vote);
         }
 
         function getJsonData(actId) {
-            var ID  = PREFIX + actId;
+            var ID = PREFIX + actId;
             return $http.get('/api/acts/export/json')
                 .then(function (response) {
                     return response.data[ID][STATUS][0].value;
