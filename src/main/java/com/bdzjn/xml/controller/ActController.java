@@ -5,7 +5,9 @@ import com.bdzjn.xml.controller.exception.NotFoundException;
 import com.bdzjn.xml.controller.exception.UnprocessableEntityException;
 import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
+import com.bdzjn.xml.model.act.Amendment;
 import com.bdzjn.xml.model.act.wrapper.ActWrapper;
+import com.bdzjn.xml.model.act.wrapper.AmendmentWrapper;
 import com.bdzjn.xml.service.ActService;
 import com.bdzjn.xml.service.ExportService;
 import com.bdzjn.xml.service.PdfService;
@@ -118,6 +120,13 @@ public class ActController {
     public ResponseEntity exportMetadataAsJson() throws TransformerException, FileNotFoundException {
         final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFJSON, Format.JSON, "pof/act/metadata", "src/main/resources/export/act_metadata.json");
         return new ResponseEntity<>(metadata, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{id}/amendments", produces = "application/xml")
+    public ResponseEntity findAmendments(@PathVariable String id) {
+        final List<Amendment> amendments = actService.findAmendments(id);
+        final AmendmentWrapper amendmentWrapper = new AmendmentWrapper(amendments);
+        return new ResponseEntity<>(amendmentWrapper, HttpStatus.OK);
     }
 
 }

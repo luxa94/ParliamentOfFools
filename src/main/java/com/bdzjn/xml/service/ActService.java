@@ -3,8 +3,10 @@ package com.bdzjn.xml.service;
 import com.bdzjn.xml.controller.dto.VoteDTO;
 import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
+import com.bdzjn.xml.model.act.Amendment;
 import com.bdzjn.xml.model.act.DocumentStatus;
 import com.bdzjn.xml.repository.marklogic.ActRepository;
+import com.bdzjn.xml.repository.marklogic.AmendmentRepository;
 import com.bdzjn.xml.util.DateConverter;
 import com.bdzjn.xml.util.MetadataExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -39,10 +40,12 @@ public class ActService {
     public static final String RDF_XSL = "src/main/resources/rdf/act.xsl";
 
     private final ActRepository actRepository;
+    private final AmendmentRepository amendmentRepository;
 
     @Autowired
-    public ActService(ActRepository actRepository) {
+    public ActService(ActRepository actRepository, AmendmentRepository amendmentRepository) {
         this.actRepository = actRepository;
+        this.amendmentRepository = amendmentRepository;
     }
 
     public Optional<Act> create(String rawAct, User user) {
@@ -118,5 +121,9 @@ public class ActService {
         }
 
         actRepository.updateActStatus(id, actStatus);
+    }
+
+    public List<Amendment> findAmendments(String id) {
+        return amendmentRepository.findByActId(id);
     }
 }

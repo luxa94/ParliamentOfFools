@@ -106,11 +106,7 @@ public class ActRepository {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
                 MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
-        final XMLDocumentManager documentManager = client.newXMLDocumentManager();
-
-        ServerEvaluationCall call = client.newServerEval();
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        final ServerEvaluationCall call = client.newServerEval();
 
         call.xquery("declare namespace a = \"http://www.fools.gov.rs/acts\";\n//a:act");
 

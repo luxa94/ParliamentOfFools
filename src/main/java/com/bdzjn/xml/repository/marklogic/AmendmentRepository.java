@@ -1,5 +1,6 @@
 package com.bdzjn.xml.repository.marklogic;
 
+import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.Amendment;
 import com.bdzjn.xml.properties.MarkLogicConfiguration;
 import com.bdzjn.xml.util.RdfTripleUpdate;
@@ -7,6 +8,8 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.DocumentPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.StringHandle;
@@ -18,9 +21,13 @@ import com.marklogic.client.semantics.SPARQLQueryManager;
 import com.marklogic.client.util.EditableNamespaceContext;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -116,5 +123,28 @@ public class AmendmentRepository {
 
 
         client.release();
+    }
+
+    public List<Amendment> findByActId(String actId) {
+        final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
+                MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
+                MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
+        final ServerEvaluationCall call = client.newServerEval();
+
+        call.xquery("declare namespace a = \"http://www.fools.gov.rs/acts\";\n" +
+                "/a:amendment[@actId='" + actId + "']");
+
+        final List<Amendment> amendments = new ArrayList<>();
+        final EvalResultIterator eval = call.eval();
+
+        eval.forEach(evalResult -> {
+            final String s = evalResult.getAs(String.class);
+            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(s.getBytes(Charset.defaultCharset()));
+            final Amendment act = JAXB.unmarshal(byteArrayInputStream, Amendment.class);
+
+            amendments.add(act);
+        });
+
+        return amendments;
     }
 }
