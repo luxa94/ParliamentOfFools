@@ -6,6 +6,7 @@ import com.bdzjn.xml.controller.exception.UnprocessableEntityException;
 import com.bdzjn.xml.model.User;
 import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.Amendment;
+import com.bdzjn.xml.model.act.DocumentStatus;
 import com.bdzjn.xml.model.act.wrapper.ActWrapper;
 import com.bdzjn.xml.model.act.wrapper.AmendmentWrapper;
 import com.bdzjn.xml.service.ActService;
@@ -14,8 +15,6 @@ import com.bdzjn.xml.service.PdfService;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.semantics.RDFMimeTypes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.StringWriter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/acts")
@@ -56,9 +58,16 @@ public class ActController {
 
     @GetMapping(produces = "application/xml")
     public ResponseEntity findAll(@RequestParam(required = false, defaultValue = "") String term,
-                                  @RequestParam(required = false, defaultValue = "") String text) throws TransformerException {
+                                  @RequestParam(required = false, defaultValue = "") String text) {
         final List<Act> acts = actService.findAll(term, text);
         final ActWrapper actWrapper = new ActWrapper(acts);
+        return new ResponseEntity<>(actWrapper, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/pending", produces = "application/xml")
+    public ResponseEntity findPending() {
+        final List<Act> pendingActs = actService.findAll().stream().filter(act -> act.getStatus() == DocumentStatus.PENDING).collect(Collectors.toList());
+        final ActWrapper actWrapper = new ActWrapper(pendingActs);
         return new ResponseEntity<>(actWrapper, HttpStatus.OK);
     }
 
@@ -90,8 +99,6 @@ public class ActController {
 
         final Act act = actService.findById(actId).orElseThrow(NotFoundException::new);
 
-        String pathToXmlFile = "src/main/resources/pdf/" + actId + ".xml";
-
         StringWriter stringWriter = new StringWriter();
         JAXBContext jaxbContext = JAXBContext.newInstance(Act.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -112,19 +119,26 @@ public class ActController {
 
     @GetMapping(value = "/export/rdf")
     public ResponseEntity exportMetadataAsRdf() throws TransformerException, FileNotFoundException {
-        final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFXML, Format.XML,"pof/act/metadata", "src/main/resources/export/act_metadata.rdf");
+        final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFXML, Format.XML, "pof/act/metadata");
         return new ResponseEntity<>(metadata, HttpStatus.OK);
     }
 
-    @GetMapping(value="/export/json")
+    @GetMapping(value = "/export/json")
     public ResponseEntity exportMetadataAsJson() throws TransformerException, FileNotFoundException {
-        final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFJSON, Format.JSON, "pof/act/metadata", "src/main/resources/export/act_metadata.json");
+        final String metadata = exportService.exportMetadataAs(RDFMimeTypes.RDFJSON, Format.JSON, "pof/act/metadata");
         return new ResponseEntity<>(metadata, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}/amendments", produces = "application/xml")
     public ResponseEntity findAmendments(@PathVariable String id) {
         final List<Amendment> amendments = actService.findAmendments(id);
+        final AmendmentWrapper amendmentWrapper = new AmendmentWrapper(amendments);
+        return new ResponseEntity<>(amendmentWrapper, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{id}/amendments/pending", produces = "application/xml")
+    public ResponseEntity findPendingAmendments(@PathVariable String id) {
+        final List<Amendment> amendments = actService.findAmendments(id).stream().filter(amendment -> amendment.getStatus() == DocumentStatus.PENDING).collect(Collectors.toList());
         final AmendmentWrapper amendmentWrapper = new AmendmentWrapper(amendments);
         return new ResponseEntity<>(amendmentWrapper, HttpStatus.OK);
     }

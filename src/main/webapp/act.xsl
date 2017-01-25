@@ -4,7 +4,7 @@
 
     <xsl:template name="renderArticle">
         <xsl:for-each select="a:article">
-            <h6>Član <xsl:value-of select="@id + 1"/></h6>
+            <h6>Član <xsl:value-of select="@id"/></h6>
             <xsl:for-each select="a:paragraph">
                 <xsl:for-each select="a:text/a:contentItem">
                     <p style="padding-left: 8em; padding-right: 8em; margin: 0"><xsl:value-of select="."/></p>

@@ -1,12 +1,15 @@
 package com.bdzjn.xml.repository.marklogic;
 
-import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.Amendment;
+import com.bdzjn.xml.model.act.AmendmentItem;
+import com.bdzjn.xml.model.act.PlacementType;
 import com.bdzjn.xml.properties.MarkLogicConfiguration;
 import com.bdzjn.xml.util.RdfTripleUpdate;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.document.DocumentMetadataPatchBuilder.PatchHandle;
 import com.marklogic.client.document.DocumentPatchBuilder;
+import com.marklogic.client.document.DocumentPatchBuilder.Position;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
@@ -16,7 +19,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.marker.DocumentPatchHandle;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
-import com.marklogic.client.semantics.SPARQLQueryDefinition;
 import com.marklogic.client.semantics.SPARQLQueryManager;
 import com.marklogic.client.util.EditableNamespaceContext;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,6 @@ import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,10 +90,6 @@ public class AmendmentRepository {
         }
     }
 
-    public List<Amendment> findForAct(String actId) {
-        return new ArrayList<>();
-    }
-
     public void updateAmendmentStatus(String amendmentId, String newStatus) {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
@@ -121,8 +118,68 @@ public class AmendmentRepository {
         String predicate = "http://www.fools.gov.rs/amendments/status";
         RdfTripleUpdate.updateTriple(sparqlQueryManager, "pof/amendments/metadata", subject, predicate, newStatus);
 
+        if ("ACCEPTED".equals(newStatus)) {
+            findById(amendmentId).ifPresent(amendment -> mergeAmendment(amendment, client));
+        }
 
         client.release();
+    }
+
+    private void mergeAmendment(Amendment amendment, DatabaseClient client) {
+        final XMLDocumentManager xmlDocumentManager = client.newXMLDocumentManager();
+        final DocumentPatchBuilder documentPatchBuilder = xmlDocumentManager.newPatchBuilder();
+        final EditableNamespaceContext namespaceContext = new EditableNamespaceContext();
+        namespaceContext.setDefaultNamespaceURI("http://www.fools.gov.rs/acts");
+        documentPatchBuilder.setNamespaces(namespaceContext);
+
+        amendment.getAmendmentItem().forEach(amendmentItem -> {
+            final String path = "act[@id='" + amendment.getActId() + "']//" + amendmentItem.getElementName() + "[@id='" + amendmentItem.getElementId() + "']";
+
+            switch (amendmentItem.getType()) {
+                case DELETE:
+                    documentPatchBuilder.delete(path);
+                    break;
+                case UPDATE:
+                    final String updatePatch = findAmendmentItemPart(amendmentItem);
+                    documentPatchBuilder.replaceFragment(path, updatePatch);
+                    break;
+                case INSERT:
+                    final String insertPatch = findAmendmentItemPart(amendmentItem);
+                    final Position position = amendmentItem.getPlacement() == PlacementType.AFTER ? Position.AFTER : Position.BEFORE;
+                    documentPatchBuilder.insertFragment(path, position, insertPatch);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        final PatchHandle patchHandle = documentPatchBuilder.build();
+        final String documentId = "/acts/" + amendment.getActId();
+        xmlDocumentManager.patch(documentId, patchHandle);
+    }
+
+    private String findAmendmentItemPart(AmendmentItem amendmentItem) {
+        switch (amendmentItem.getElementName()) {
+            case "article":
+                return marshal(amendmentItem.getArticle());
+            case "paragraph":
+                return marshal(amendmentItem.getParagraph());
+            case "item":
+                return marshal(amendmentItem.getItem());
+            case "subItem":
+                return marshal(amendmentItem.getSubItem());
+            case "ident":
+                return marshal(amendmentItem.getIdent());
+            default:
+                return "";
+        }
+    }
+
+    private String marshal(Object object) {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        JAXB.marshal(object, byteArrayOutputStream);
+        final String xml = byteArrayOutputStream.toString();
+        return xml.substring(xml.indexOf(System.getProperty("line.separator"))+1);
     }
 
     public List<Amendment> findByActId(String actId) {

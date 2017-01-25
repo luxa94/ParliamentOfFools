@@ -9,7 +9,7 @@
         <xsl:for-each select="a:article">
 
             <fo:block font-family="sans-serif" font-size="16px" text-align="center">
-                Clan <xsl:value-of select="@id  + 1"/>
+                Clan <xsl:value-of select="@id"/>
             </fo:block>-->
 
             <xsl:for-each select="a:paragraph">

@@ -87,8 +87,8 @@ public class ActService {
 
     private void populateIdFor(String tagName, Document doc) {
         final NodeList list = doc.getDocumentElement().getElementsByTagName(tagName);
-        for(int i=0; i<list.getLength(); i++) {
-            ((Element)list.item(i)).setAttribute("id", Integer.toString(i));
+        for (int i = 0; i < list.getLength(); i++) {
+            ((Element) list.item(i)).setAttribute("id", Integer.toString(i + 1));
         }
     }
 
@@ -96,16 +96,18 @@ public class ActService {
         return actRepository.findById(id);
     }
 
-    public List<Act> findAll(String term, String text) throws TransformerException {
+    public List<Act> findAll(String term, String text) {
         if (!term.isEmpty()) {
             return actRepository.findByTerm(term);
-        }
-        else if (!text.isEmpty()){
+        } else if (!text.isEmpty()) {
             return actRepository.findByText(text);
-        }
-        else {
+        } else {
             return actRepository.findAll();
         }
+    }
+
+    public List<Act> findAll() {
+        return actRepository.findAll();
     }
 
     public Optional<Act> update(Act act) {

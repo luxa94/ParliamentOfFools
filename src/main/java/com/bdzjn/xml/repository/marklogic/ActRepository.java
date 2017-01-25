@@ -13,30 +13,16 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
 import com.marklogic.client.io.marker.DocumentPatchHandle;
 import com.marklogic.client.query.*;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.client.semantics.*;
 import com.marklogic.client.util.EditableNamespaceContext;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
-import com.marklogic.client.io.JAXBHandle;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.semantics.SPARQLMimeTypes;
-import com.marklogic.client.semantics.SPARQLQueryDefinition;
-import com.marklogic.client.semantics.SPARQLQueryManager;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.Writer;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -152,7 +138,7 @@ public class ActRepository {
 
     }
 
-    public List<Act> findByText(String text) throws TransformerException {
+    public List<Act> findByText(String text) {
         String[] tokens = text.split("\\s+");
         String criteria = tokens[0];
 
@@ -166,28 +152,26 @@ public class ActRepository {
 
         QueryManager queryManager = client.newQueryManager();
 
-        StructuredQueryBuilder qb = queryManager.newStructuredQueryBuilder();
+        StringQueryDefinition qb = queryManager.newStringDefinition();
 
-//        StructuredQueryDefinition queryDefinition = qb
+        qb.setCriteria(criteria);
 
-        //queryDefinition.setCriteria(criteria);
+        SearchHandle results = queryManager.search(qb, new SearchHandle());
 
-        //SearchHandle results = queryManager.search(queryDefinition, new SearchHandle());
+        MatchDocumentSummary matches[] = results.getMatchResults();
+        MatchDocumentSummary result;
 
-//        MatchDocumentSummary matches[] = results.getMatchResults();
-//        MatchDocumentSummary result;
-//
-//        final List<Act> acts = new ArrayList<>();
-//        for (int i = 0; i < matches.length; i++) {
-//            result = matches[i];
-//
-//            String uriOfAct = result.getUri().substring(6);
-//            findById(uriOfAct).ifPresent(acts::add);
-//        }
+        final List<Act> acts = new ArrayList<>();
+        for (MatchDocumentSummary matche : matches) {
+            result = matche;
+
+            String uriOfAct = result.getUri().substring(6);
+            findById(uriOfAct).ifPresent(acts::add);
+        }
 
         client.release();
 
-        return null;
+        return acts;
     }
 
 

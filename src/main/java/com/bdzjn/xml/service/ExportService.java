@@ -20,7 +20,7 @@ import java.io.PrintWriter;
 @Service
 public class ExportService {
 
-    public String exportMetadataAs(String mimeType, Format format, String namedGraphUri, String outputFilePath) throws TransformerException, FileNotFoundException {
+    public String exportMetadataAs(String mimeType, Format format, String namedGraphUri) throws TransformerException, FileNotFoundException {
         final DatabaseClient client = DatabaseClientFactory.newClient(MarkLogicConfiguration.host,
                 MarkLogicConfiguration.port, MarkLogicConfiguration.database, MarkLogicConfiguration.user,
                 MarkLogicConfiguration.password, DatabaseClientFactory.Authentication.DIGEST);
