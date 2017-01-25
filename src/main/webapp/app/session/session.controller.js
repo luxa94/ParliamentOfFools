@@ -3,9 +3,9 @@
     'use strict';
 
     angular.module('parliament')
-        .controller('sessionController', ['$rootScope', 'Alertify', 'sessionService', '$state', sessionController]);
+        .controller('sessionController', ['$scope', '$compile', '$rootScope', 'Alertify', 'sessionService', '$state', 'xhttpService', sessionController]);
 
-    function sessionController($rootScope, Alertify, sessionService, $state) {
+    function sessionController($scope, $compile, $rootScope, Alertify, sessionService, $state, xhttpService) {
         var vm = this;
 
         vm.activeSession = $rootScope.activeSession;
@@ -34,12 +34,32 @@
         vm.activate = function () {
             sessionService.activate()
                 .then(function (response) {
-                    vm.activeSession = $rootScope.activeSession = response.data;
+                    $rootScope.activeSession = response.data;
+                    vm.activeSession = response.data;
+                    vm.showPendingActs();
                     Alertify.success('Session is now active.');
                 })
                 .catch(function () {
                     Alertify.error('Something went wrong.');
                 });
+        };
+
+        vm.showPendingActs = function () {
+            var xml = xhttpService.get('/api/acts/pending');
+            var style = xhttpService.get("pendingActs.xsl");
+
+            if (document.implementation && document.implementation.createDocument) {
+                var xsltProcessor = new XSLTProcessor();
+                xsltProcessor.importStylesheet(style);
+                var resultDocument = xsltProcessor.transformToFragment(xml, document);
+                var allActs = document.getElementById('allActs');
+                angular.element(allActs).empty();
+                angular.element(allActs).append($compile(resultDocument)($scope));
+            }
+        };
+
+        if (vm.activeSession && vm.activeSession.status === 'ACTIVE') {
+            vm.showPendingActs();
         }
     }
 

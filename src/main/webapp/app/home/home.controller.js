@@ -19,15 +19,14 @@
         vm.searchByText = searchByText;
         vm.onStatusChoice = onStatusChoice;
 
-        activate("","");
+        activate("", "");
 
 
         function activate(term, text) {
 
             var xml = xhttpService.get("/api/acts?term=" + term + "&text=" + text);
             var style = xhttpService.get("acts.xsl");
-            if (document.implementation && document.implementation.createDocument)
-            {
+            if (document.implementation && document.implementation.createDocument) {
                 var xsltProcessor = new XSLTProcessor();
                 xsltProcessor.importStylesheet(style);
                 var resultDocument = xsltProcessor.transformToFragment(xml, document);
@@ -52,8 +51,6 @@
         function searchByText() {
             activate("", vm.searchText)
         }
-
-
 
     }
 

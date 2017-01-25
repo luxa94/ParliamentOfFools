@@ -11,7 +11,7 @@
             <xsl:for-each select="wrapper/act">
                 <tr>
                     <td>
-                        <a href="#!/act/{@id}" alt="More information">
+                        <a href="#!/actVoting/{@id}" alt="More information">
                             <xsl:value-of select="@title"/>
                         </a>
                     </td>
@@ -19,7 +19,7 @@
                         <xsl:value-of select="@date"/>
                     </td>
                     <td>
-                        <button ng-click="vm.getPDF('{@id}')" style="cursor: pointer;"> PDF </button>
+                        <button ng-click="vm.getPDF('{@id}')" style="cursor: pointer;">PDF</button>
                     </td>
                 </tr>
             </xsl:for-each>

@@ -44,7 +44,7 @@ public class SessionController {
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional()
     @PutMapping("/active")
     public ResponseEntity activate() {
         final Session session = sessionService.activateSession();
