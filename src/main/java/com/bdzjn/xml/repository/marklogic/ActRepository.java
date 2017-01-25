@@ -164,7 +164,6 @@ public class ActRepository {
         final List<Act> acts = new ArrayList<>();
         for (MatchDocumentSummary matche : matches) {
             result = matche;
-
             String uriOfAct = result.getUri().substring(6);
             findById(uriOfAct).ifPresent(acts::add);
         }
@@ -202,9 +201,5 @@ public class ActRepository {
         RdfTripleUpdate.updateTriple(sparqlQueryManager, "pof/act/metadata", subject, predicate, newStatus);
 
         client.release();
-    }
-
-    public static void updateRDFStringObject(String id, String resource, String predicate, String value, SPARQLQueryManager sparqlQueryManager) {
-
     }
 }

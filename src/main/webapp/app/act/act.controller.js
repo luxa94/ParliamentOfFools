@@ -1,9 +1,6 @@
 (function(angular) {
     'use strict';
 
-    var PREFIX = 'http://www.fools.gov.rs/acts/';
-    var STATUS = PREFIX + 'status';
-
     angular
         .module('parliament')
         .controller('actController', actController);
@@ -30,13 +27,13 @@
             }
         }
 
-        $http.get('/api/acts/export/json')
-            .then(function (response) {
-                vm.status = response.data[ID][STATUS][0].value;
-            })
-            .catch(function (reason) {
-                console.log(reason);
+        getJsonData();
+
+        function getJsonData() {
+            actService.getJsonData($stateParams.id).then(function(status) {
+               vm.status =  status;
             });
+        }
 
         vm.cancelAmendment = function () {
             vm.amendment = '';

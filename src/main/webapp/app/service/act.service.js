@@ -3,6 +3,8 @@
     'use strict';
 
     var BASE_URL = '/api/acts';
+    var PREFIX = 'http://www.fools.gov.rs/acts/';
+    var STATUS = PREFIX + 'status';
 
     angular
         .module('parliament')
@@ -12,7 +14,8 @@
         return {
             create: create,
             generatePdf: generatePdf,
-            searchByTerm: searchByTerm
+            vote: vote,
+            getJsonData: getJsonData
         };
 
         function create(act) {
@@ -28,8 +31,19 @@
             return $http.get("api/acts/pdf/" + actId);
         }
 
-        function searchByTerm(term) {
-            return $http.get()
+        function vote(actId, vote) {
+            return $http.put("api/acts/" + actId + "/vote");
+        }
+
+        function getJsonData(actId) {
+            var ID  = PREFIX + actId;
+            return $http.get('/api/acts/export/json')
+                .then(function (response) {
+                    return response.data[ID][STATUS][0].value;
+                })
+                .catch(function (reason) {
+                    console.log(reason);
+                });
         }
 
     }
