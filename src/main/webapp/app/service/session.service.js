@@ -4,6 +4,7 @@
 
     var BASE_URL = '/api/sessions';
     var ACTIVE_URL = BASE_URL + '/active';
+    var FINISH_URL = BASE_URL + '/finish';
 
     angular
         .module('parliament')
@@ -15,6 +16,7 @@
             findOne: findOne,
             findActive: findActive,
             activate: activate,
+            finish: finish,
             edit: edit,
             delete: deleteOne
         };
@@ -33,6 +35,10 @@
 
         function activate() {
             return $http.put(ACTIVE_URL);
+        }
+
+        function finish() {
+            return $http.put(FINISH_URL);
         }
 
         function edit(sessionDTO) {

@@ -12,17 +12,20 @@
         </md-card-actions>
     </md-card>
 
-    <md-card flex ng-if="vm.activeSession && vm.activeSession.status === 'ACTIVE' && vm.user.role === 'PRESIDENT'" class="md-padding">
+    <md-card flex ng-if="vm.activeSession && vm.activeSession.status === 'ACTIVE'" class="md-padding">
         <md-card-header>
             <p class="md-subhead">Active session</p>
         </md-card-header>
         <md-card-content>
 
         </md-card-content>
-
+        <md-card-actions ng-if="vm.user.role === 'PRESIDENT'" layout="row"
+                         layout-align="end center">
+            <md-button class="md-accent md-raised" ng-click="vm.finish()">Finish</md-button>
+        </md-card-actions>
     </md-card>
 
-    <div id="allActs" flex flex-gt-md="80" layout="column" layout-align="center center"></div>
+    <div id="allActs" flex flex-gt-md="80" layout="column" layout-align="center center" ng-class="{hidden: !(vm.activeSession && vm.activeSession.status ==='ACTIVE')}"></div>
 
     <md-card ng-if="!vm.activeSession && vm.user.role === 'PRESIDENT'" layout="column" class="md-padding" flex
              flex-gt-md="60">

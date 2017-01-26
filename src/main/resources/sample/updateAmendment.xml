@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <amendment xmlns="http://www.fools.gov.rs/acts" date="2006-05-04" id="ID000" name="name0" status="PENDING">
     <description>description0</description>
-    <amendmentItem placement="BEFORE" type="UPDATE">
-        <elementName>article</elementName>
-        <elementId>1</elementId>
+    <amendmentItem placement="BEFORE" type="UPDATE" elementName="article" elementId="1">
         <article id="1b">
             <paragraph>
                 <item>

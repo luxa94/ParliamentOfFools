@@ -2,7 +2,10 @@ package com.bdzjn.xml.service;
 
 
 import com.bdzjn.xml.controller.dto.VoteDTO;
+import com.bdzjn.xml.controller.exception.NotFoundException;
+import com.bdzjn.xml.model.act.Act;
 import com.bdzjn.xml.model.act.Amendment;
+import com.bdzjn.xml.repository.marklogic.ActRepository;
 import com.bdzjn.xml.repository.marklogic.AmendmentRepository;
 import com.bdzjn.xml.util.MetadataExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +33,25 @@ public class AmendmentService {
 
     private static final String RDF_XSL = "src/main/resources/rdf/amendment.xsl";
 
+    private final ActRepository actRepository;
     private final AmendmentRepository amendmentRepository;
 
     @Autowired
-    public AmendmentService(AmendmentRepository amendmentRepository) {
+    public AmendmentService(ActRepository actRepository, AmendmentRepository amendmentRepository) {
+        this.actRepository = actRepository;
         this.amendmentRepository = amendmentRepository;
     }
 
     public Optional<Amendment> create(String rawAmendment, String actId) {
         try {
+            final Act act = actRepository.findById(actId).orElseThrow(NotFoundException::new);
             final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawAmendment.getBytes(Charset.defaultCharset()));
             final Document doc = documentBuilder.parse(byteArrayInputStream);
 
             doc.getDocumentElement().setAttribute("id", UUID.randomUUID().toString());
             doc.getDocumentElement().setAttribute("actId", actId);
+            doc.getDocumentElement().setAttribute("actName", act.getTitle());
 
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -74,5 +81,9 @@ public class AmendmentService {
         }
 
         amendmentRepository.updateAmendmentStatus(id, actStatus);
+    }
+
+    public Optional<Amendment> findById(String amendmentId) {
+        return amendmentRepository.findById(amendmentId);
     }
 }

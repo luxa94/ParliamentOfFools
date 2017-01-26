@@ -48,6 +48,12 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
+    public Session finishSession() {
+        final Session session = findOpenSession().orElseThrow(NotFoundException::new);
+        session.setStatus(SessionStatus.CLOSED);
+        return sessionRepository.save(session);
+    }
+
     public void edit(SessionDTO sessionDTO) {
         final Session session = sessionRepository.findOpenSession().orElseThrow(NotFoundException::new);
 

@@ -51,6 +51,13 @@ public class SessionController {
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
 
+    @Transactional()
+    @PutMapping("/finish")
+    public ResponseEntity finish() {
+        final Session session = sessionService.finishSession();
+        return new ResponseEntity<>(session, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAnyAuthority('PRESIDENT')")
     @Transactional
     @PutMapping

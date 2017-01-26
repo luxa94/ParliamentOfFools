@@ -28,7 +28,7 @@
                 })
                 .catch(function () {
                     Alertify.error('Unable to create session.');
-                })
+                });
         };
 
         vm.activate = function () {
@@ -41,6 +41,17 @@
                 })
                 .catch(function () {
                     Alertify.error('Something went wrong.');
+                });
+        };
+
+        vm.finish = function () {
+            sessionService.finish()
+                .then(function () {
+                    vm.activeSession = undefined;
+                    $rootScope.activeSession = undefined;
+                })
+                .catch(function () {
+                    Alertify.error('Could not finish session.')
                 });
         };
 

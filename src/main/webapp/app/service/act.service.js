@@ -5,6 +5,8 @@
     var BASE_URL = '/api/acts';
     var PREFIX = 'http://www.fools.gov.rs/acts/';
     var STATUS = PREFIX + 'status';
+    var AMENDMENT_PREFIX = 'http://www.fools.gov.rs/amendments/';
+    var AMENDMENT_STATUS = AMENDMENT_PREFIX + 'status';
 
     angular
         .module('parliament')
@@ -15,7 +17,8 @@
             create: create,
             generatePdf: generatePdf,
             vote: vote,
-            getJsonData: getJsonData
+            getJsonData: getJsonData,
+            getAmendmentJsonData: getAmendmentJsonData
         };
 
         function create(act) {
@@ -40,6 +43,17 @@
             return $http.get('/api/acts/export/json')
                 .then(function (response) {
                     return response.data[ID][STATUS][0].value;
+                })
+                .catch(function (reason) {
+                    console.log(reason);
+                });
+        }
+
+        function getAmendmentJsonData(amendmentId) {
+            var ID = AMENDMENT_PREFIX + amendmentId;
+            return $http.get('/api/amendments/export/json')
+                .then(function (response) {
+                    return response.data[ID][AMENDMENT_STATUS][0].value;
                 })
                 .catch(function (reason) {
                     console.log(reason);

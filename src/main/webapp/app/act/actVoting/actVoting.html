@@ -14,15 +14,15 @@
                 <md-content flex layout class="md-padding">
                     <md-input-container>
                         <label>Glasovi Za</label>
-                        <input type="number" min="0" ng-model="vm.votes.numberOfFor"/>
+                        <input type="number" min="0" ng-model="vm.votes.numberOfFor" required/>
                     </md-input-container>
                     <md-input-container>
                         <label>Glasovi Protiv</label>
-                        <input type="number" min="0" ng-model="vm.votes.numberAgainst"/>
+                        <input type="number" min="0" ng-model="vm.votes.numberAgainst" required/>
                     </md-input-container>
                     <md-input-container>
                         <label>Uzdržani</label>
-                        <input type="number" min="0" ng-model="vm.votes.numberAbstained"/>
+                        <input type="number" min="0" ng-model="vm.votes.numberAbstained" required/>
                     </md-input-container>
                 </md-content>
 

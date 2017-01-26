@@ -4,9 +4,9 @@
 
     <xsl:template match="/">
         <xsl:for-each select="//amendment">
-            <a href="#!/amendment/{@id}" alt="More information">
+            <p><a href="#!/amendmentVoting/{@id}" alt="More information">
                 <xsl:value-of select="@name"/>
-            </a>
+            </a></p><br/>
         </xsl:for-each>
     </xsl:template>
 

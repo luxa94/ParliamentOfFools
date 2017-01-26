@@ -11,8 +11,6 @@
     <xs:element name="amendmentItem">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="elementName" type="xs:string"/>
-                <xs:element name="elementId" type="xs:string"/>
                 <xs:choice>
                     <xs:element ref="article"/>
                     <xs:element ref="paragraph"/>
@@ -22,6 +20,8 @@
                 </xs:choice>
             </xs:sequence>
 
+            <xs:attribute name="elementName" type="xs:string" use="required"/>
+            <xs:attribute name="elementId" type="xs:string" use="required"/>
             <xs:attribute name="placement" type="placementType" use="required"/>
             <xs:attribute name="type" type="amendmentType" use="required"/>
         </xs:complexType>
@@ -38,6 +38,7 @@
             <xs:attribute name="id" type="xs:ID" use="required"/>
             <xs:attribute name="name" type="xs:string" use="required"/>
             <xs:attribute name="actId" type="xs:string" use="required"/>
+            <xs:attribute name="actName" type="xs:string" use="required"/>
             <xs:attribute name="status" type="documentStatus" use="required"/>
         </xs:complexType>
     </xs:element>
