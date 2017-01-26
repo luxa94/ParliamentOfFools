@@ -25,15 +25,24 @@ public class PdfService {
 
     private TransformerFactory transformerFactory;
 
-    private static final String XSL_FILE = "src/main/resources/pdf/act_fo.xsl";
+    private static final String ACT_XSL = "src/main/resources/pdf/act_fo.xsl";
+    private static final String AMENDMENT_XSL = "src/main/resources/pdf/amendment_fo.xsl";
 
     public PdfService() throws SAXException, IOException {
         fopFactory = FopFactory.newInstance(new File("src/main/resources/fop.xconf"));
         transformerFactory = new TransformerFactoryImpl();
     }
 
-    public ByteArrayOutputStream generatePDF(StringWriter inputFile) throws Exception {
-        StreamSource transformSource = new StreamSource(XSL_FILE);
+    public ByteArrayOutputStream generateActPDF(StringWriter input) throws Exception {
+        return generatePDF(input, ACT_XSL);
+    }
+
+    public ByteArrayOutputStream generateAmendmentPDF(StringWriter input) throws Exception {
+        return generatePDF(input, AMENDMENT_XSL);
+    }
+
+    private ByteArrayOutputStream generatePDF(StringWriter inputFile, String xslFile) throws Exception {
+        StreamSource transformSource = new StreamSource(xslFile);
 
         // Initialize the transformation subject
         StreamSource source = new StreamSource(new ByteArrayInputStream(inputFile.getBuffer().toString().getBytes()));
@@ -58,6 +67,8 @@ public class PdfService {
 
         return outStream;
     }
+
+
 }
 
 

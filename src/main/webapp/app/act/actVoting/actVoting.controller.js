@@ -5,9 +5,9 @@
         .module('parliament')
         .controller('actVotingController', actVotingController);
 
-    actVotingController.$inject = ['$stateParams', 'actService', 'xhttpService', 'Alertify'];
+    actVotingController.$inject = ['$stateParams', 'actService', 'xhttpService', 'Alertify', '$compile', '$scope'];
 
-    function actVotingController($stateParams, actService, xhttpService, Alertify) {
+    function actVotingController($stateParams, actService, xhttpService, Alertify, $compile, $scope) {
         var vm = this;
 
         vm.actId = $stateParams.id;
@@ -34,8 +34,8 @@
                 var xsltProcessor = new XSLTProcessor();
                 xsltProcessor.importStylesheet(style);
                 var resultDocument = xsltProcessor.transformToFragment(amendments, document);
-                document.getElementById("votingActAmendments").appendChild(resultDocument);
-
+                var element = document.getElementById("votingActAmendments");
+                angular.element(element).append($compile(resultDocument)($scope))
             }
         }
 
@@ -53,5 +53,10 @@
                 return vm.status = response;
             });
         }
+
+
+        vm.getPDF = function (amendmentId) {
+            window.location.href = "api/amendments/pdf/" + amendmentId;
+        };
     }
 })(angular);

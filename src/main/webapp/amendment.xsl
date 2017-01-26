@@ -67,7 +67,9 @@
                                 </xsl:when>
                             </xsl:choose>
 
-                            <xsl:call-template name="renderArticle" />
+                            <em>
+                                <xsl:call-template name="renderArticle" />
+                            </em>
                         </xsl:when>
                         <xsl:when test="@type = 'UPDATE'">
                             <p>Član <xsl:value-of select="@elementId"/> se menja i glasi</p>
@@ -93,13 +95,15 @@
                                 </xsl:when>
                             </xsl:choose>
 
-                            <xsl:call-template name="renderParagraph" />
+                            <em>
+                                <xsl:call-template name="renderParagraph" />
+                            </em>
                         </xsl:when>
                         <xsl:when test="@type = 'UPDATE'">
                             <p>Stav sa id-em <xsl:value-of select="@elementId"/> se menja i glasi</p>
-                            <p><em>
+                            <em>
                                 <xsl:call-template name="renderParagraph" />
-                            </em></p>
+                            </em>
                         </xsl:when>
                         <xsl:when test="@type = 'DELETE'">
                             <p>Stav sa id-em <xsl:value-of select="@elementId"/> se briše</p>
@@ -119,13 +123,15 @@
                             </xsl:when>
                         </xsl:choose>
 
-                        <xsl:call-template name="renderItem" />
+                        <em>
+                            <xsl:call-template name="renderItem" />
+                        </em>
                     </xsl:when>
                     <xsl:when test="@type = 'UPDATE'">
                         <p>Tačka sa id-em <xsl:value-of select="@elementId"/> se menja i glasi</p>
-                        <p><em>
+                        <em>
                             <xsl:call-template name="renderItem" />
-                        </em></p>
+                        </em>
                     </xsl:when>
                     <xsl:when test="@type = 'DELETE'">
                         <p>Tačka sa id-em <xsl:value-of select="@elementId"/> se briše</p>
@@ -145,13 +151,15 @@
                             </xsl:when>
                         </xsl:choose>
 
-                        <xsl:call-template name="renderSubitem" />
+                        <em>
+                            <xsl:call-template name="renderSubitem" />
+                        </em>
                     </xsl:when>
                     <xsl:when test="@type = 'UPDATE'">
                         <p>Podtačka sa id-em <xsl:value-of select="@elementId"/> se menja i glasi</p>
-                        <p><em>
+                        <em>
                             <xsl:call-template name="renderSubitem" />
-                        </em></p>
+                        </em>
                     </xsl:when>
                     <xsl:when test="@type = 'DELETE'">
                         <p>Podtačka sa id-em <xsl:value-of select="@elementId"/> se briše</p>
@@ -171,13 +179,15 @@
                             </xsl:when>
                         </xsl:choose>
 
-                        <xsl:call-template name="renderIdent" />
+                        <em>
+                            <xsl:call-template name="renderIdent" />
+                        </em>
                     </xsl:when>
                     <xsl:when test="@type = 'UPDATE'">
                         <p>Tačka sa id-em <xsl:value-of select="@elementId"/> se menja i glasi</p>
-                        <p><em>
+                        <em>
                             <xsl:call-template name="renderIdent" />
-                        </em></p>
+                        </em>
                     </xsl:when>
                     <xsl:when test="@type = 'DELETE'">
                         <p>Tačka sa id-em <xsl:value-of select="@elementId"/> se briše</p>

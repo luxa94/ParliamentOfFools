@@ -10,7 +10,7 @@
 
             <fo:block font-family="sans-serif" font-size="16px" text-align="center">
                 Clan <xsl:value-of select="@id"/>
-            </fo:block>-->
+            </fo:block>
 
             <xsl:for-each select="a:paragraph">
                 <xsl:for-each select="a:text/a:contentItem">
@@ -42,7 +42,7 @@
 
             <fo:block font-weight="bold" text-align="center" font-size="18px">
                 Glava <xsl:value-of select="position()"/>
-            </fo:block>-->
+            </fo:block>
 
             <xsl:call-template name="renderArticle" />
 

@@ -105,7 +105,7 @@ public class ActController {
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         jaxbMarshaller.marshal(act, stringWriter);
 
-        final ByteArrayOutputStream byteArrayOutputStream = pdfService.generatePDF(stringWriter);
+        final ByteArrayOutputStream byteArrayOutputStream = pdfService.generateActPDF(stringWriter);
         final byte[] bytes = byteArrayOutputStream.toByteArray();
 
         return ResponseEntity
